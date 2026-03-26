@@ -1,16 +1,53 @@
-# React + Vite
+# 🎨 Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 프로젝트 소개
+이 프로젝트는 React + Vite 기반의 프론트엔드입니다.  
+백엔드 API와 통신하여 사용자 UI를 제공합니다.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ 기술 스택
+- React
+- Vite
+- Axios
+- React Router
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📂 폴더 구조
+src/ <br>
+├── components/ # 재사용 컴포넌트 <br>
+├── pages/ # 페이지 <br>
+├── api/ # API 호출 <br>
+├── hooks/ # 커스텀 훅 <br>
+├── store/ # 상태 관리 <br>
+└── assets/ # 이미지, 스타일 <br>
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ⚙️ 실행 방법
+
+### 1️⃣ 패키지 설치
+```bash
+npm install
+```
+### 2️⃣ 환경 변수 설정
+```text
+VITE_API_URL=http://localhost:3000
+```
+---
+
+### 3️⃣ 실행
+```bash
+npm run dev
+```
+
+---
+
+## 🌐 API 연결
+
+```js
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+```
