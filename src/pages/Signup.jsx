@@ -22,7 +22,14 @@ function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.username || !form.nickname || !form.email || !form.password || !form.region_code) {
+    if (
+      !form.username ||
+      !form.nickname ||
+      !form.email ||
+      !form.password ||
+      !form.confirmPassword ||
+      !form.region_code
+    ) {
       alert("모든 값을 입력해주세요");
       return;
     }
@@ -96,7 +103,7 @@ function Signup() {
           </select>
 
           <button type="submit" style={styles.button}>
-            가입하기
+            회원가입
           </button>
         </form>
       </div>
@@ -114,24 +121,37 @@ const styles = {
   },
   card: {
     background: "white",
-    padding: "30px",
-    borderRadius: "10px",
-    width: "300px",
+    padding: "32px",
+    borderRadius: "16px",
+    width: "360px",
     boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
+  },
+  title: {
+    marginBottom: "8px",
+  },
+  desc: {
+    marginBottom: "16px",
+    color: "#666",
+    fontSize: "14px",
   },
   input: {
     width: "100%",
-    padding: "10px",
+    padding: "12px",
     marginTop: "10px",
+    boxSizing: "border-box",
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
   },
   button: {
     width: "100%",
-    marginTop: "15px",
-    padding: "10px",
+    marginTop: "18px",
+    padding: "12px",
     background: "#2563eb",
     color: "white",
     border: "none",
+    borderRadius: "8px",
     cursor: "pointer",
+    fontWeight: "bold",
   },
 };
 
