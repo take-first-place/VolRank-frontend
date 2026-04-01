@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     username: "",
     nickname: "",
@@ -39,120 +42,105 @@ function Signup() {
       return;
     }
 
-    console.log(form);
-    alert("회원가입 완료");
+    console.log("회원가입 요청:", form);
+    alert("회원가입 완료 (임시)");
+    navigate("/login");
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2>회원가입</h2>
+    <div className="signup-page">
+      <div className="signup-wrapper">
+        <h1 className="signup-title">회원가입</h1>
+        <p className="signup-subtitle">VolRank와 함께 봉사를 시작하세요</p>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            name="username"
-            placeholder="아이디"
-            value={form.username}
-            onChange={handleChange}
-            style={styles.input}
-          />
+        <div className="signup-card">
+          <form onSubmit={handleSubmit} className="signup-form">
+            <div className="signup-group">
+              <label>아이디</label>
+              <input
+                type="text"
+                name="username"
+                placeholder="아이디"
+                value={form.username}
+                onChange={handleChange}
+              />
+            </div>
 
-          <input
-            name="nickname"
-            placeholder="닉네임"
-            value={form.nickname}
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <div className="signup-group">
+              <label>비밀번호</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="비밀번호를 입력하세요"
+                value={form.password}
+                onChange={handleChange}
+              />
+            </div>
 
-          <input
-            name="email"
-            placeholder="이메일"
-            value={form.email}
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <div className="signup-group">
+              <label>비밀번호 확인</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="비밀번호를 다시 입력하세요"
+                value={form.confirmPassword}
+                onChange={handleChange}
+              />
+            </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="비밀번호"
-            value={form.password}
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <div className="signup-group">
+              <label>닉네임</label>
+              <input
+                type="text"
+                name="nickname"
+                placeholder="사용할 닉네임"
+                value={form.nickname}
+                onChange={handleChange}
+              />
+            </div>
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="비밀번호 확인"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <div className="signup-group">
+              <label>이메일</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="이메일을 입력하세요"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
 
-          <select
-            name="region_code"
-            value={form.region_code}
-            onChange={handleChange}
-            style={styles.input}
-          >
-            <option value="">지역 선택</option>
-            <option value="서울">서울</option>
-            <option value="경기">경기</option>
-          </select>
+            <div className="signup-group">
+              <label>지역</label>
+              <select
+                name="region_code"
+                value={form.region_code}
+                onChange={handleChange}
+              >
+                <option value="서울">서울</option>
+                <option value="경기">경기</option>
+                <option value="인천">인천</option>
+                <option value="부산">부산</option>
+              </select>
+            </div>
 
-          <button type="submit" style={styles.button}>
-            회원가입
-          </button>
-        </form>
+            <button type="submit" className="signup-button">
+              회원가입
+            </button>
+          </form>
+
+          <div className="signup-divider"></div>
+
+          <p className="signup-login-text">
+            이미 계정이 있으신가요?{" "}
+            <span onClick={() => navigate("/login")}>로그인</span>
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    background: "#f5f7fb",
-  },
-  card: {
-    background: "white",
-    padding: "32px",
-    borderRadius: "16px",
-    width: "360px",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
-  },
-  title: {
-    marginBottom: "8px",
-  },
-  desc: {
-    marginBottom: "16px",
-    color: "#666",
-    fontSize: "14px",
-  },
-  input: {
-    width: "100%",
-    padding: "12px",
-    marginTop: "10px",
-    boxSizing: "border-box",
-    border: "1px solid #d1d5db",
-    borderRadius: "8px",
-  },
-  button: {
-    width: "100%",
-    marginTop: "18px",
-    padding: "12px",
-    background: "#2563eb",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-};
+
 
 export default Signup;
