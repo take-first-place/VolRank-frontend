@@ -24,7 +24,7 @@ const Header = () => {
           <Link to="/login" className="nav-link">
             로그인 
           </Link>
-          <Link to="/signup" className="signup-btn">
+          <Link to="/signup" className="nav-link">
             회원가입 
           </Link>
         </div>
