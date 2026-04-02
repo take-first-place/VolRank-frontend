@@ -1,9 +1,10 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-import Home from "./pages/home";
+import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import UserLoginPage from "./pages/UserLoginPage";
+import RankingPage from "./pages/RankingPage";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<UserLoginPage />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/ranking" element={<RankingPage />} />
       </Routes>
     </>
   );
