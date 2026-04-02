@@ -24,8 +24,6 @@ const RankingPage = () => {
 
       console.log("랭킹 응답:", data);
 
-      // 백엔드 응답 형식에 따라 여기 수정 가능
-      // 예: data.data.items 또는 data.rankings
       setRankingList(data.data ?? []);
     } catch (err) {
       console.error("랭킹 조회 실패:", err);
