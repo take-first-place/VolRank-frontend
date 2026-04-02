@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/auth";
 
 const UserLoginPage = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -17,19 +18,37 @@ const UserLoginPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.username || !form.password) {
-      alert("아이디와 비밀번호를 입력해주세요.");
+    if (!form.email || !form.password) {
+      alert("이메일과 비밀번호를 입력해주세요.");
       return;
     }
 
-    console.log("로그인 요청:", form);
-    alert("로그인 성공 (임시)");
+    try {
+      const response = await loginUser({
+        email: form.email,
+        password: form.password,
+      });
 
-    // 로그인 성공 시 메인으로 이동 (임시)
-    navigate("/");
+      console.log("로그인 응답:", response.data);
+
+      const token = response.data.data.token;
+      localStorage.setItem("token", token);
+
+      alert("로그인 성공!");
+      navigate("/");
+    } catch (error) {
+      console.error("로그인 실패:", error);
+
+      if (error.response) {
+        alert(error.response.data.message || "로그인에 실패했습니다.");
+      } else {
+        alert("서버와 연결할 수 없습니다.");
+      }
+      
+    }
   };
 
   return (
@@ -41,12 +60,12 @@ const UserLoginPage = () => {
         <div className="login-card">
           <form onSubmit={handleSubmit} className="login-form">
             <div className="login-group">
-              <label>아이디</label>
+              <label>이메일</label>
               <input
-                type="text"
-                name="username"
-                placeholder="아이디를 입력하세요"
-                value={form.username}
+                type="email"
+                name="email"
+                placeholder="이메일을 입력하세요"
+                value={form.email}
                 onChange={handleChange}
               />
             </div>
