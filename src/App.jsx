@@ -3,6 +3,7 @@ import Home from "./pages/home";
 import Signup from "./pages/Signup";
 import UserLoginPage from "./pages/UserLoginPage";
 import RankingPage from "./pages/RankingPage";
+import MyPage from "./pages/MyPage";
 
 const App = () => {
   const isLoggedIn = false;
@@ -34,7 +35,7 @@ const App = () => {
           }
         />
 
-        {/* <Route
+        <Route
           path="/mypage"
           element={
             isLoggedIn ? (
@@ -43,7 +44,8 @@ const App = () => {
               <Navigate to="/login" replace />
             )
           }
-        /> */}
+        />
+
       </Routes>
     </>
   );
