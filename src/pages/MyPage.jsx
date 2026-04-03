@@ -1,8 +1,11 @@
 import CertificateUploadSection from "../components/CertificateUploadSection";
 import CertificateStatusSection from "../components/CertificateStatusSection";
+import Layout from "../components/Layout";
 
-function MyPage() {
+function MyPage({isLoggedIn}) {
   return (
+    <Layout isLoggedIn={isLoggedIn}>
+
     <div className="mypage">
       <h1 className="mypage-title">마이페이지</h1>
       <p className="mypage-subtitle">
@@ -26,6 +29,7 @@ function MyPage() {
         </div>
       </div>
     </div>
+    </Layout>
   );
 }
 

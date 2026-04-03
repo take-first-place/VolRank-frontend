@@ -6,7 +6,7 @@ import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
 
 const App = () => {
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   return (
     <>
