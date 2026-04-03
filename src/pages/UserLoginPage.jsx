@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/auth";
+import Layout from "../components/Layout";
 
-const UserLoginPage = () => {
+const UserLoginPage = ({ isLoggedIn }) => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -47,54 +48,55 @@ const UserLoginPage = () => {
       } else {
         alert("서버와 연결할 수 없습니다.");
       }
-      
     }
   };
 
   return (
-    <div className="login-page">
-      <div className="login-wrapper">
-        <h1 className="login-title">로그인</h1>
-        <p className="login-subtitle">VolRank에 오신 것을 환영합니다</p>
+    <Layout isLoggedIn={isLoggedIn}>
+      <div className="login-page">
+        <div className="login-wrapper">
+          <h1 className="login-title">로그인</h1>
+          <p className="login-subtitle">VolRank에 오신 것을 환영합니다</p>
 
-        <div className="login-card">
-          <form onSubmit={handleSubmit} className="login-form">
-            <div className="login-group">
-              <label>이메일</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="이메일을 입력하세요"
-                value={form.email}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="login-card">
+            <form onSubmit={handleSubmit} className="login-form">
+              <div className="login-group">
+                <label>이메일</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="이메일을 입력하세요"
+                  value={form.email}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <div className="login-group">
-              <label>비밀번호</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="비밀번호를 입력하세요"
-                value={form.password}
-                onChange={handleChange}
-              />
-            </div>
+              <div className="login-group">
+                <label>비밀번호</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="비밀번호를 입력하세요"
+                  value={form.password}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <button type="submit" className="login-button">
-              로그인
-            </button>
-          </form>
+              <button type="submit" className="login-button">
+                로그인
+              </button>
+            </form>
 
-          <div className="login-divider"></div>
+            <div className="login-divider"></div>
 
-          <p className="login-signup-text">
-            계정이 없으신가요?{" "}
-            <span onClick={() => navigate("/signup")}>회원가입</span>
-          </p>
+            <p className="login-signup-text">
+              계정이 없으신가요?{" "}
+              <span onClick={() => navigate("/signup")}>회원가입</span>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
