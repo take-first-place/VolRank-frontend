@@ -1,0 +1,67 @@
+.app-shell {
+  min-height: 100vh;
+}
+
+.header {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dddddd;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  gap: 48px;
+}
+
+.nav-link {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.auth-menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.page-section {
+  width: 100%;
+}
+
+.center-section {
+  text-align: center;
+}
+
+.page-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.page-subtitle {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 40px;
+}

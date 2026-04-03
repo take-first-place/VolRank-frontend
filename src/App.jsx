@@ -1,22 +1,51 @@
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Home from "./pages/Home";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/home";
 import Signup from "./pages/Signup";
 import UserLoginPage from "./pages/UserLoginPage";
 import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
 
 const App = () => {
+  const isLoggedIn = true;
+
   return (
     <>
-      <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<UserLoginPage />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/ranking" element={<RankingPage />} />
-        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
+        <Route path="/ranking" element={<RankingPage isLoggedIn={isLoggedIn} />} />
+
+        <Route
+          path="/login"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/" replace />
+            ) : (
+              <UserLoginPage isLoggedIn={isLoggedIn} />
+            )
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Signup isLoggedIn={isLoggedIn} />
+            )
+          }
+        />
+
+        <Route
+          path="/mypage"
+          element={
+            isLoggedIn ? (
+              <MyPage isLoggedIn={isLoggedIn} />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
       </Routes>
     </>
   );
