@@ -12,6 +12,9 @@ function MyPage({ isLoggedIn }) {
         <div className="mypage-section">
           <h2>내 정보</h2>
           <div className="mypage-box">
+            <p>이름: -</p>
+            <p>이메일: -</p>
+            <p>지역: -</p>
             <p className="mypage-empty-text">회원 정보를 불러올 수 없습니다.</p>
           </div>
         </div>
