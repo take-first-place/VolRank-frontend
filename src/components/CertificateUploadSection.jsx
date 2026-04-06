@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { uploadCertificate } from "../api/certificate";
 
 function CertificateUploadSection() {
   const [file, setFile] = useState(null);
@@ -26,10 +27,27 @@ function CertificateUploadSection() {
   };
 
   const handleUpload = () => {
+    console.log("버튼 눌림");
     if (!file){
       alert("파일을 선택해주세요.");
       return;
     }
+
+    const formData = new FormData();
+    formData.append("certificate", file);
+
+    formData.append("volunteerParticipationId", 1);
+
+    uploadCertificate(formData)
+    .then((res) => {
+      console.log("업로드 성공:", res.data);
+      alert("업로드 성공");
+      window.location.reload();
+    })
+    .catch((err) => {
+      console.log("업로드 실패:", err);
+      alert("업로드 실패");
+    });
   };
   return (
     <div>
