@@ -1,6 +1,7 @@
 import CertificateUploadSection from "../components/CertificateUploadSection";
 import CertificateStatusSection from "../components/CertificateStatusSection";
 import Layout from "../components/Layout";
+import "../styles/mypage.css";
 
 function MyPage({ isLoggedIn }) {
   return (
