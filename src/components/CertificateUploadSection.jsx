@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { uploadCertificate } from "../api/certificate";
 
-function CertificateUploadSection() {
+function CertificateUploadSection( {fetchCertificates }) {
   const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
@@ -27,7 +27,6 @@ function CertificateUploadSection() {
   };
 
   const handleUpload = () => {
-    console.log("버튼 눌림");
     if (!file){
       alert("파일을 선택해주세요.");
       return;
@@ -42,7 +41,8 @@ function CertificateUploadSection() {
     .then((res) => {
       console.log("업로드 성공:", res.data);
       alert("업로드 성공");
-      window.location.reload();
+      setFile(null);
+      fetchCertificates();
     })
     .catch((err) => {
       console.log("업로드 실패:", err);

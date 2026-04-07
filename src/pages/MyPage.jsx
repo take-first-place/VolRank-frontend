@@ -1,9 +1,27 @@
+import { useEffect, useState } from "react";
 import CertificateUploadSection from "../components/CertificateUploadSection";
 import CertificateStatusSection from "../components/CertificateStatusSection";
 import Layout from "../components/Layout";
+import { getMyCertificates } from "../api/certificate";
 import "../styles/mypage.css";
 
 function MyPage({ isLoggedIn }) {
+  const [certificates, setCertificates ] = useState ([]);
+
+  const fetchCertificates = () => {
+    getMyCertificates()
+    .then((res) => {
+      console.log("인증서 목록 응답:", res.data);
+      setCertificates(res.data.data || []);
+    })
+    .catch((err) => {
+      console.log("인증서 목록 조회 실패:", err);
+    });
+
+  };
+  useEffect(() => {
+    fetchCertificates();
+  },[]);
   return (
     <Layout isLoggedIn={isLoggedIn}>
       <div className="mypage">
@@ -23,8 +41,8 @@ function MyPage({ isLoggedIn }) {
         <div className="mypage-section">
           <h2>인증서 제출 현황</h2>
           <div className="mypage-box">
-            <CertificateStatusSection />
-            <CertificateUploadSection />
+            <CertificateStatusSection certificates = {certificates}/>
+            <CertificateUploadSection fetchCertificates = {fetchCertificates}/>
           </div>
         </div>
       </div>

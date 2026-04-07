@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import UserLoginPage from "./pages/UserLoginPage";
 import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
+import VolunteerPage from "./pages/VolunteerPage";
 
 const App = () => {
   const isLoggedIn = true;
@@ -13,6 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
         <Route path="/ranking" element={<RankingPage isLoggedIn={isLoggedIn} />} />
+        <Route path="/volunteers" element={<VolunteerPage isLoggedIn={isLoggedIn} />} />
 
         <Route
           path="/login"
