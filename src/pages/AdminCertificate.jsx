@@ -4,29 +4,39 @@ import {approveUser, rejectUser, getCertificates} from "../../admin"
 
 const AdminCertificate = () => {
     const [list, setlist] = useState([]);
+    const [form, setForm] = useState([]);
 
-   const fetchadmin =async () => {
+    const fetchadmin =async () => {
         const res = await getCertificates();
         setlist(res.data);   
     };
 
-useEffect (() => {
-    fetchadmin();
-    },[]);
+    useEffect (() => {
+      fetchadmin();
+      },[]);
 
-  
+const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
 const handleApprove = async(id) =>{
     await approveUser(id);
     fetchadmin();
 }
 
 const handleReject = async(id) => {
-    await rejectUser(id);
+  const reason = reason[id];
+
+  if(!reason || !reason.trim()){
+    alert("거절 사유 입력하세요");
+    return;
+  }
+  await rejectUser({
+    id, reason, status: "rejected",
+  });
     fetchadmin();
 };
 
-
- 
 
 return(
     <div className="card">
@@ -56,7 +66,16 @@ return(
                 <td>
                   <div className="row">
                    <button onClick={() => handleApprove(item.id)}>승인</button>
-                    <button onClick={() => handleReject(item.id)}>거부</button>
+                  <button onClick={() => handleReject(item.id)}>거부</button>
+                  <form onSubmit={handleReject}>
+                  <div className="row">
+                  <input type = "text" 
+                    placeholder = "거절사유" 
+                    value = {form.reason}
+                    onChange={handleChange}
+                    />
+                  </div>
+                  </form>
                   </div>
                 </td>
               </tr>
