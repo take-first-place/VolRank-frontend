@@ -6,6 +6,9 @@ import Signup from "./pages/Signup";
 import UserLoginPage from "./pages/UserLoginPage";
 import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
+import AdminPage from "./pages/adminpage";
+import AdminRoute from "./components/adminrouter";
+
 
 const App = () => {
   return (
@@ -17,6 +20,8 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route element={<AdminRoute/>}>
+        <Route path ="/admin" element ={<AdminPage/>}/></Route> 
       </Routes>
     </>
   );
