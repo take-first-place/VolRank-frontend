@@ -5,8 +5,7 @@ import UserLoginPage from "./pages/UserLoginPage";
 import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
 import AdminPage from "./pages/adminpage";
-import AdminRoute from "./components/adminrouter";
-
+import Adminroute from "./components/adminroute";
 import VolunteerPage from "./pages/VolunteerPage";
 
 const App = () => {
@@ -50,6 +49,9 @@ const App = () => {
             )
           }
         />
+
+        <Route element={<Adminroute/>}>
+        <Route path ="/admin" element ={<AdminPage/>}/></Route>
 
       </Routes>
     </>
