@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import { useAuth } from "../hooks/useAuth";
 import "../styles/signup.css";
 
-function Signup({isLoggedIn}) {
+export const Signup = () => {
   const navigate = useNavigate();
+
+  const {
+    signup,
+    sendVerificationCode,
+    verifiedEmailCode,
+    isLoading,
+    error,
+    clearError,
+  } = useAuth();
 
   const [form, setForm] = useState({
     username: "",
@@ -15,18 +25,51 @@ function Signup({isLoggedIn}) {
     region_code: "",
   });
 
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [validationError, setValidationError] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
 
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    if (validationError) setValidationError("");
+    if (error) clearError();
   };
 
-  const handleSubmit = (e) => {
+  // 인증번호 전송
+  const handleSendCode = async () => {
+    if (!form.email) {
+      setValidationError("이메일을 입력해주세요");
+      return;
+    }
+
+    const result = await sendVerificationCode(form.email);
+    if (result.success) {
+      setIsCodeSent(true);
+      alert("인증번호가 전송되었습니다.");
+    }
+  };
+
+  // 인증번호 확인
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      setValidationError("인증번호를 입력해주세요");
+      return;
+    }
+
+    const result = await verifiedEmailCode(form.email, verificationCode);
+    if (result.success) {
+      setIsEmailVerified(true);
+      alert("이메일 인증이 완료되었습니다.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 검증
     if (
       !form.username ||
       !form.nickname ||
@@ -35,29 +78,105 @@ function Signup({isLoggedIn}) {
       !form.confirmPassword ||
       !form.region_code
     ) {
-      alert("모든 값을 입력해주세요");
+      setValidationError("모든 값을 입력해주세요");
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      alert("비밀번호가 다릅니다");
+      setValidationError("비밀번호가 다릅니다");
       return;
     }
 
-    console.log("회원가입 요청:", form);
-    alert("회원가입 완료 (임시)");
-    navigate("/login");
+    // API 호출
+    const result = await signup({
+      username: form.username,
+      nickname: form.nickname,
+      email: form.email,
+      password: form.password,
+      region_code: form.region_code,
+    });
+
+    if (result.success) {
+      alert("회원가입이 완료되었습니다!");
+      navigate("/login");
+    }
   };
 
+  const displayError = validationError || error;
+
   return (
-    <Layout isLoggedIn={isLoggedIn}>
+    <Layout>
       <div className="signup-page">
         <div className="signup-wrapper">
           <h1 className="signup-title">회원가입</h1>
           <p className="signup-subtitle">VolRank와 함께 봉사를 시작하세요</p>
 
           <div className="signup-card">
+            {displayError && <div className="signup-error">{displayError}</div>}
+
             <form onSubmit={handleSubmit} className="signup-form">
+              {/* 이메일 + 인증 */}
+              <div className="signup-group">
+                <label>이메일</label>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="이메일을 입력하세요"
+                    value={form.email}
+                    onChange={handleChange}
+                    disabled={isLoading || isEmailVerified}
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSendCode}
+                    disabled={isLoading || isEmailVerified}
+                    className="signup-button-secondary"
+                  >
+                    {isCodeSent ? "재전송" : "인증번호"}
+                  </button>
+                </div>
+              </div>
+
+              {/* 인증번호 입력 */}
+              {isCodeSent && !isEmailVerified && (
+                <div className="signup-group">
+                  <label>인증번호</label>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input
+                      type="text"
+                      placeholder="인증번호 6자리"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                      disabled={isLoading}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleVerifyCode}
+                      disabled={isLoading}
+                      className="signup-button-secondary"
+                    >
+                      확인
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {isEmailVerified && (
+                <div
+                  style={{
+                    color: "#16a34a",
+                    fontSize: "14px",
+                    marginBottom: "8px",
+                  }}
+                >
+                  ✓ 이메일 인증 완료
+                </div>
+              )}
+
+              {/* 나머지 필드들 */}
               <div className="signup-group">
                 <label>아이디</label>
                 <input
@@ -66,6 +185,7 @@ function Signup({isLoggedIn}) {
                   placeholder="아이디"
                   value={form.username}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
               </div>
 
@@ -74,9 +194,10 @@ function Signup({isLoggedIn}) {
                 <input
                   type="password"
                   name="password"
-                  placeholder="비밀번호를 입력하세요"
+                  placeholder="비밀번호"
                   value={form.password}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
               </div>
 
@@ -85,9 +206,10 @@ function Signup({isLoggedIn}) {
                 <input
                   type="password"
                   name="confirmPassword"
-                  placeholder="비밀번호를 다시 입력하세요"
+                  placeholder="비밀번호 확인"
                   value={form.confirmPassword}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
               </div>
 
@@ -96,20 +218,10 @@ function Signup({isLoggedIn}) {
                 <input
                   type="text"
                   name="nickname"
-                  placeholder="사용할 닉네임"
+                  placeholder="닉네임"
                   value={form.nickname}
                   onChange={handleChange}
-                />
-              </div>
-
-              <div className="signup-group">
-                <label>이메일</label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="이메일을 입력하세요"
-                  value={form.email}
-                  onChange={handleChange}
+                  disabled={isLoading}
                 />
               </div>
 
@@ -119,16 +231,35 @@ function Signup({isLoggedIn}) {
                   name="region_code"
                   value={form.region_code}
                   onChange={handleChange}
+                  disabled={isLoading}
                 >
-                  <option value="서울">서울</option>
-                  <option value="경기">경기</option>
-                  <option value="인천">인천</option>
-                  <option value="부산">부산</option>
+                  <option value="">지역 선택</option>
+                  <option value="10">서울</option>
+                  <option value="11">부산</option>
+                  <option value="20">대구</option>
+                  <option value="30">인천</option>
+                  <option value="40">광주</option>
+                  <option value="50">대전</option>
+                  <option value="60">울산</option>
+                  <option value="70">세종</option>
+                  <option value="80">경기</option>
+                  <option value="90">강원</option>
+                  <option value="100">충북</option>
+                  <option value="110">충남</option>
+                  <option value="120">전북</option>
+                  <option value="130">전남</option>
+                  <option value="140">경북</option>
+                  <option value="150">경남</option>
+                  <option value="160">제주</option>
                 </select>
               </div>
 
-              <button type="submit" className="signup-button">
-                회원가입
+              <button
+                type="submit"
+                className="signup-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "가입 중..." : "회원가입"}
               </button>
             </form>
 
@@ -143,6 +274,6 @@ function Signup({isLoggedIn}) {
       </div>
     </Layout>
   );
-}
+};
 
 export default Signup;
