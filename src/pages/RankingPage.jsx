@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
 import { getNationalRanking, getRegionalRanking } from "../api/ranking";
 import { getSidos, getSigungus } from "../api/region";
@@ -94,7 +94,7 @@ function RankingPage({ isLoggedIn }) {
     }
   };
 
-  const fetchRanking = async () => {
+  const fetchRanking = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -132,7 +132,7 @@ function RankingPage({ isLoggedIn }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tab, selectedSidoCode, selectedSigunguCode]);
 
   useEffect(() => {
     fetchSidos();
@@ -147,7 +147,7 @@ function RankingPage({ isLoggedIn }) {
   useEffect(() => {
     setShowDetail(false);
     fetchRanking();
-  }, [tab, selectedSidoCode, selectedSigunguCode]);
+  }, [fetchRanking]);
 
   return (
     <Layout isLoggedIn={isLoggedIn}>
