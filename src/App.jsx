@@ -6,7 +6,6 @@ import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
 import AdminPage from "./pages/adminpage";
 import Adminroute from "./components/adminroute";
-
 import VolunteerPage from "./pages/VolunteerPage";
 
 const App = () => {
