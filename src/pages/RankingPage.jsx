@@ -2,63 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
 import { getNationalRanking, getRegionalRanking } from "../api/ranking";
 import { getSidos, getSigungus } from "../api/region";
+import RankingTabs from "../components/ranking/RankingTabs";
+import RankingFilter from "../components/ranking/RankingFilter";
+import Top3Section from "../components/ranking/Top3Section";
+import MyRankSection from "../components/ranking/MyRankSection";
+import RankingDetailSection from "../components/ranking/RankingDetailSection";
+import {
+  getEmptyRankingData,
+  isDisplayRegion,
+  normalizeRankingData,
+  normalizeRegionItem,
+} from "../utils/rankingUtils";
 import "../styles/ranking.css";
-
-const getRegionCodeValue = (item) => {
-  return String(item?.regionCode ?? item?.region_code ?? "");
-};
-
-const normalizeRegionItem = (item) => ({
-  ...item,
-  regionCode: getRegionCodeValue(item),
-});
-
-const normalizeRankingData = (data) => {
-  const top100 = data?.top100 || [];
-  const myRankFromTop100 =
-    top100.find((item) => item?.is_me || item?.isMe) || null;
-
-  return {
-    top3: top100.slice(0, 3),
-    top100,
-    myRank: data?.myRank || myRankFromTop100 || null,
-    regionName: data?.regionName || "",
-  };
-};
-
-const getRankValue = (item, fallback = "") => {
-  return item?.rankPosition ?? item?.rank_position ?? fallback;
-};
-
-const getHoursValue = (item) => {
-  return item?.totalHours ?? item?.total_hours ?? 0;
-};
-
-const getRegionNameValue = (item, tab) => {
-  if (tab === "national") {
-    return (
-      item?.fullRegionName ??
-      item?.full_region_name ??
-      item?.regionName ??
-      item?.region_name ??
-      ""
-    );
-  }
-
-  if (tab === "sido") {
-    return item?.regionName ?? item?.region_name ?? "";
-  }
-
-  return "";
-};
-
-const getNicknameValue = (item) => {
-  return item?.nickname ?? "";
-};
-
-const getIsMeValue = (item) => {
-  return item?.isMe ?? item?.is_me ?? false;
-};
 
 function RankingPage({ isLoggedIn }) {
   const [tab, setTab] = useState("national");
@@ -70,12 +25,7 @@ function RankingPage({ isLoggedIn }) {
   const [selectedSidoCode, setSelectedSidoCode] = useState("");
   const [selectedSigunguCode, setSelectedSigunguCode] = useState("");
 
-  const [rankingData, setRankingData] = useState({
-    top3: [],
-    top100: [],
-    myRank: null,
-    regionName: "",
-  });
+  const [rankingData, setRankingData] = useState(getEmptyRankingData());
 
   const [loading, setLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
@@ -89,11 +39,6 @@ function RankingPage({ isLoggedIn }) {
   }, [tab, showDetail]);
 
   const shouldShowRegion = tab === "national" || tab === "sido";
-
-  const isDisplayRegion = (item) => {
-    const code = getRegionCodeValue(item);
-    return code !== "00";
-  };
 
   const fetchSidos = async () => {
     try {
@@ -162,12 +107,7 @@ function RankingPage({ isLoggedIn }) {
 
       if (tab === "sido") {
         if (!selectedSidoCode) {
-          setRankingData({
-            top3: [],
-            top100: [],
-            myRank: null,
-            regionName: "",
-          });
+          setRankingData(getEmptyRankingData());
           return;
         }
 
@@ -176,12 +116,7 @@ function RankingPage({ isLoggedIn }) {
 
       if (tab === "sigungu") {
         if (!selectedSigunguCode) {
-          setRankingData({
-            top3: [],
-            top100: [],
-            myRank: null,
-            regionName: "",
-          });
+          setRankingData(getEmptyRankingData());
           return;
         }
 
@@ -193,12 +128,7 @@ function RankingPage({ isLoggedIn }) {
     } catch (err) {
       console.error("랭킹 조회 실패:", err);
       setError("랭킹 정보를 불러오지 못했습니다.");
-      setRankingData({
-        top3: [],
-        top100: [],
-        myRank: null,
-        regionName: "",
-      });
+      setRankingData(getEmptyRankingData());
     } finally {
       setLoading(false);
     }
@@ -231,77 +161,18 @@ function RankingPage({ isLoggedIn }) {
 
         {!showDetail && (
           <>
-            <div className="ranking-tab-section">
-              <button
-                className={
-                  tab === "national" ? "ranking-tab active" : "ranking-tab"
-                }
-                onClick={() => setTab("national")}
-              >
-                전국
-              </button>
-              <button
-                className={
-                  tab === "sido" ? "ranking-tab active" : "ranking-tab"
-                }
-                onClick={() => setTab("sido")}
-              >
-                시/도
-              </button>
-              <button
-                className={
-                  tab === "sigungu" ? "ranking-tab active" : "ranking-tab"
-                }
-                onClick={() => setTab("sigungu")}
-              >
-                시/군/구
-              </button>
-            </div>
+            <RankingTabs tab={tab} onChangeTab={setTab} />
 
-            {(tab === "sido" || tab === "sigungu") && (
-              <div className="ranking-filter-section">
-                <div className="ranking-filter-box">
-                  <label>시/도</label>
-                  <select
-                    value={selectedSidoCode}
-                    onChange={(e) => setSelectedSidoCode(e.target.value)}
-                  >
-                    {sidos.map((item) => (
-                      <option
-                        key={`sido-${item.regionCode}`}
-                        value={item.regionCode}
-                      >
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {tab === "sigungu" && (
-                  <div className="ranking-filter-box">
-                    <label>시/군/구</label>
-                    <select
-                      value={selectedSigunguCode}
-                      onChange={(e) => setSelectedSigunguCode(e.target.value)}
-                      disabled={regionLoading || sigungus.length === 0}
-                    >
-                      {sigungus.length === 0 ? (
-                        <option value="">시/군/구 없음</option>
-                      ) : (
-                        sigungus.map((item) => (
-                          <option
-                            key={`sigungu-${item.regionCode}`}
-                            value={item.regionCode}
-                          >
-                            {item.name}
-                          </option>
-                        ))
-                      )}
-                    </select>
-                  </div>
-                )}
-              </div>
-            )}
+            <RankingFilter
+              tab={tab}
+              sidos={sidos}
+              sigungus={sigungus}
+              selectedSidoCode={selectedSidoCode}
+              selectedSigunguCode={selectedSigunguCode}
+              onChangeSido={setSelectedSidoCode}
+              onChangeSigungu={setSelectedSigunguCode}
+              regionLoading={regionLoading}
+            />
 
             {rankingData.regionName && tab !== "national" && (
               <div className="ranking-current-region">
@@ -316,135 +187,28 @@ function RankingPage({ isLoggedIn }) {
 
         {!loading && !error && !showDetail && (
           <>
-            <section className="ranking-section">
-              <div className="ranking-section-header">
-                <h2 className="ranking-section-title">TOP 3</h2>
-                <button
-                  className="ranking-detail-button"
-                  onClick={() => setShowDetail(true)}
-                >
-                  자세히 보기
-                </button>
-              </div>
+            <Top3Section
+              top3={rankingData.top3}
+              tab={tab}
+              shouldShowRegion={shouldShowRegion}
+              onClickDetail={() => setShowDetail(true)}
+            />
 
-              {rankingData.top3.length === 0 ? (
-                <p className="ranking-message">표시할 TOP 3가 없습니다.</p>
-              ) : (
-                <div className="ranking-top3-list">
-                  {rankingData.top3.map((item, index) => {
-                    const rank = getRankValue(item, index + 1);
-                    const regionName = getRegionNameValue(item, tab);
-
-                    return (
-                      <div
-                        className={`ranking-top3-card rank-${rank}`}
-                        key={`top3-${item.user_id ?? item.nickname ?? "unknown"}-${rank}-${index}`}
-                      >
-                        <p className="ranking-top3-rank">{rank}위</p>
-                        <p className="ranking-top3-name">
-                          {getNicknameValue(item)}
-                          {getIsMeValue(item) && (
-                            <span className="ranking-me-badge">나</span>
-                          )}
-                        </p>
-                        {shouldShowRegion && regionName && (
-                          <p className="ranking-top3-region">{regionName}</p>
-                        )}
-                        <p className="ranking-top3-hours">
-                          {getHoursValue(item)}시간
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            <section className="ranking-section">
-              <h2 className="ranking-section-title">내 랭킹</h2>
-
-              {!rankingData.myRank ? (
-                <p className="ranking-message">내 랭킹 정보가 없습니다.</p>
-              ) : (
-                <div className="ranking-my-rank-box">
-                  <p>
-                    <strong>순위</strong> {getRankValue(rankingData.myRank)}위
-                  </p>
-                  <p>
-                    <strong>닉네임</strong>{" "}
-                    {getNicknameValue(rankingData.myRank)}
-                  </p>
-                  {shouldShowRegion &&
-                    getRegionNameValue(rankingData.myRank, tab) && (
-                      <p className="ranking-my-rank-region">
-                        <strong>지역</strong>{" "}
-                        {getRegionNameValue(rankingData.myRank, tab)}
-                      </p>
-                    )}
-                  <p>
-                    <strong>누적 승인 봉사시간</strong>{" "}
-                    {getHoursValue(rankingData.myRank)}시간
-                  </p>
-                </div>
-              )}
-            </section>
+            <MyRankSection
+              myRank={rankingData.myRank}
+              tab={tab}
+              shouldShowRegion={shouldShowRegion}
+            />
           </>
         )}
 
         {!loading && !error && showDetail && (
-          <section className="ranking-section">
-            <div className="ranking-section-header">
-              <h2 className="ranking-section-title">TOP 100 상세</h2>
-              <button
-                className="ranking-detail-button"
-                onClick={() => setShowDetail(false)}
-              >
-                돌아가기
-              </button>
-            </div>
-
-            {rankingData.top100.length === 0 ? (
-              <p className="ranking-message">표시할 랭킹이 없습니다.</p>
-            ) : (
-              <div className="ranking-list">
-                {rankingData.top100.map((item, index) => {
-                  const rank = getRankValue(item, index + 1);
-                  const topRankClass = rank <= 3 ? ` rank-${rank}` : "";
-                  const regionName = getRegionNameValue(item, tab);
-
-                  return (
-                    <div
-                      className={`${
-                        getIsMeValue(item)
-                          ? "ranking-item ranking-item-me"
-                          : "ranking-item"
-                      }${topRankClass}`}
-                      key={`top100-${item.user_id ?? item.nickname ?? "unknown"}-${rank}-${index}`}
-                    >
-                      <div className="ranking-item-left">
-                        <p className="ranking-item-rank">{rank}위</p>
-                        <div>
-                          <p className="ranking-item-name">
-                            {getNicknameValue(item)}
-                            {getIsMeValue(item) && (
-                              <span className="ranking-me-badge">나</span>
-                            )}
-                          </p>
-                          {shouldShowRegion && regionName && (
-                            <p className="ranking-item-region">{regionName}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="ranking-item-right">
-                        <p>{getHoursValue(item)}시간</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </section>
+          <RankingDetailSection
+            top100={rankingData.top100}
+            tab={tab}
+            shouldShowRegion={shouldShowRegion}
+            onClickBack={() => setShowDetail(false)}
+          />
         )}
       </div>
     </Layout>
