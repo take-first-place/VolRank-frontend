@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import CertificateUploadSection from "../components/CertificateUploadSection";
 import CertificateStatusSection from "../components/CertificateStatusSection";
 import Layout from "../components/Layout";
-import { getMyCertificates } from "../api/certificate";
+import { certificateApi } from "../api/certificate";
 import "../styles/mypage.css";
 
 function MyPage({ isLoggedIn }) {
   const [certificates, setCertificates ] = useState ([]);
 
   const fetchCertificates = () => {
-    getMyCertificates()
+    certificateApi.getMyCertificates()
     .then((res) => {
       console.log("인증서 목록 응답:", res.data);
       setCertificates(res.data.data || []);
