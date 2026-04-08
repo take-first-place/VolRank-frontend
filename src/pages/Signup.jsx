@@ -234,23 +234,23 @@ export const Signup = () => {
                   disabled={isLoading}
                 >
                   <option value="">지역 선택</option>
-                  <option value="10">서울</option>
-                  <option value="11">부산</option>
-                  <option value="20">대구</option>
-                  <option value="30">인천</option>
-                  <option value="40">광주</option>
-                  <option value="50">대전</option>
-                  <option value="60">울산</option>
-                  <option value="70">세종</option>
-                  <option value="80">경기</option>
-                  <option value="90">강원</option>
-                  <option value="100">충북</option>
-                  <option value="110">충남</option>
-                  <option value="120">전북</option>
-                  <option value="130">전남</option>
-                  <option value="140">경북</option>
-                  <option value="150">경남</option>
-                  <option value="160">제주</option>
+                  <option value="11">서울</option>
+                  <option value="26">부산</option>
+                  <option value="27">대구</option>
+                  <option value="28">인천</option>
+                  <option value="29">광주</option>
+                  <option value="30">대전</option>  
+                  <option value="31">울산</option>
+                  <option value="36">세종</option>
+                  <option value="41">경기</option>
+                  <option value="42">강원</option>
+                  <option value="43">충북</option>
+                  <option value="44">충남</option>
+                  <option value="45">전북</option>
+                  <option value="46">전남</option>
+                  <option value="47">경북</option>
+                  <option value="48">경남</option>
+                  <option value="50">제주</option>
                 </select>
               </div>
 
