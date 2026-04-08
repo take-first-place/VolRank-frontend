@@ -19,11 +19,10 @@ function Home({ isLoggedIn }) {
         const data = await getRankings({
           type: "user",
           period: "daily",
-          page: 1,
-          limit: 3,
+          page: 1
         });
 
-        setTopRankers(data.data ?? []);
+        setTopRankers((data.data ?? []).slice(0,3));
       } catch (err) {
         console.error("홈 랭킹 조회 실패:", err);
         setError("랭킹 정보를 불러오지 못했습니다.");
@@ -64,19 +63,17 @@ function Home({ isLoggedIn }) {
         {!loading && !error && topRankers.length > 0 && (
           <div>
             {topRankers.map((item, index) => (
-              <div
-                key={item.id ?? index}
-              >
-                <h3>{item.rank ?? index + 1}위</h3>
+              <div key={item.id ?? index}>
+                <h3>{item.rank_position ?? index + 1}위</h3>
                 <p>닉네임: {item.nickname ?? "이름 없음"}</p>
-                <p>봉사시간: {item.totalVolunteerHours ?? 0}시간</p>
-                <p>봉사횟수: {item.totalVolunteerCount ?? 0}회</p>
+                <p>봉사시간: {item.total_hours ?? 0}시간</p>
               </div>
             ))}
           </div>
         )}
       </section>
-      
+
+      <section></section>
     </Layout>
   );
 }
