@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import AdminSidebar from "../components/AdminSidebar";
+import AdminSidebar from "../components/adminsidebar";
 import CertificateList from "../components/CertificateList";
 import { certificateApi } from "../api/certificate";
 import { styles } from "../styles/admin.style";
