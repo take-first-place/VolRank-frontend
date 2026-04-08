@@ -7,7 +7,7 @@ import MyPage from "./pages/MyPage";
 import VolunteerPage from "./pages/VolunteerPage";
 
 const App = () => {
-  const isLoggedIn = true;
+  const isLoggedIn = false;
 
   return (
     <>

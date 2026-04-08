@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/auth";
 import Layout from "../components/Layout";
+import "../styles/login.css";
 
 const UserLoginPage = ({ isLoggedIn }) => {
   const navigate = useNavigate();
