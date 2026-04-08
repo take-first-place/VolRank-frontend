@@ -1,0 +1,78 @@
+.login-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 80px 20px;
+}
+
+.login-wrapper {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.login-subtitle {
+  font-size: 18px;
+  margin-bottom: 40px;
+  color: #444;
+}
+
+.login-card {
+  background: #fff;
+  padding: 50px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.login-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.login-group label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.login-group input {
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #eee;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.login-button {
+  width: 100%;
+  height: 50px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.login-divider {
+  margin: 30px 0;
+  border-top: 1px solid #ddd;
+}
+
+.login-signup-text {
+  font-size: 14px;
+  color: #555;
+}
+
+.login-signup-text span {
+  font-weight: 700;
+  cursor: pointer;
+}

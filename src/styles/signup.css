@@ -1,0 +1,90 @@
+.signup-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 100px 20px;
+}
+
+.signup-wrapper {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.signup-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #111;
+}
+
+.signup-subtitle {
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 40px;
+}
+
+.signup-card {
+  background: #fff;
+  padding: 50px 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.signup-form {
+  text-align: left;
+}
+
+.signup-group {
+  margin-bottom: 20px;
+}
+
+.signup-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.signup-group input,
+.signup-group select {
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #eee;
+  padding: 0 14px;
+  font-size: 14px;
+  color: #111;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.signup-button {
+  width: 100%;
+  height: 56px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.signup-divider {
+  margin: 30px 0;
+  border-top: 1px solid #ddd;
+}
+
+.signup-login-text {
+  font-size: 14px;
+  color: #555;
+}
+
+.signup-login-text span {
+  font-weight: 700;
+  color: #111;
+  cursor: pointer;
+}
