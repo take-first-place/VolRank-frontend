@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
-const Header = ({ isLoggedIn }) => {
-      console.log("Header isLoggedIn:", isLoggedIn);
+const Header = () => {
+  const { isLoggedIn, user, logout } = useAuth(); 
+
+  console.log("Header isLoggedIn:", isLoggedIn);
 
   return (
     <header className="header">
@@ -25,10 +28,13 @@ const Header = ({ isLoggedIn }) => {
         <div className="auth-menu">
           {isLoggedIn ? (
             <>
+              <span>{user?.nickname}님</span>
               <Link to="/mypage" className="nav-link">
                 마이페이지
               </Link>
-              <button className="logout-btn">로그아웃</button>
+              <button onClick={logout} className="logout-btn">
+                로그아웃
+              </button>
             </>
           ) : (
             <>

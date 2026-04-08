@@ -1,109 +1,218 @@
-import { useEffect, useState } from "react";
-import { getRankings } from "../api/ranking";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
+import { getNationalRanking, getRegionalRanking } from "../api/ranking";
+import { getSidos, getSigungus } from "../api/region";
+import RankingTabs from "../components/ranking/RankingTabs";
+import RankingFilter from "../components/ranking/RankingFilter";
+import Top3Section from "../components/ranking/Top3Section";
+import MyRankSection from "../components/ranking/MyRankSection";
+import RankingDetailSection from "../components/ranking/RankingDetailSection";
+import {
+  getEmptyRankingData,
+  isDisplayRegion,
+  normalizeRankingData,
+  normalizeRegionItem,
+} from "../utils/rankingUtils";
+import "../styles/ranking.css";
 
+function RankingPage({ isLoggedIn }) {
+  const [tab, setTab] = useState("national");
+  const [showDetail, setShowDetail] = useState(false);
 
-const RankingPage = ({isLoggedIn}) => {
-  const [type, setType] = useState("user");
-  const [period, setPeriod] = useState("daily");
-  const [page, setPage] = useState(1);
+  const [sidos, setSidos] = useState([]);
+  const [sigungus, setSigungus] = useState([]);
 
-  const [rankingList, setRankingList] = useState([]);
+  const [selectedSidoCode, setSelectedSidoCode] = useState("");
+  const [selectedSigunguCode, setSelectedSigunguCode] = useState("");
+
+  const [rankingData, setRankingData] = useState(getEmptyRankingData());
+
   const [loading, setLoading] = useState(false);
+  const [regionLoading, setRegionLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchRankings = async () => {
-    setLoading(true);
-    setError("");
+  const pageTitle = useMemo(() => {
+    if (showDetail) return "TOP 100 상세 랭킹";
+    if (tab === "national") return "랭킹";
+    if (tab === "sido") return "시/도 랭킹";
+    return "시/군/구 랭킹";
+  }, [tab, showDetail]);
 
+  const shouldShowRegion = tab === "national" || tab === "sido";
+
+  const fetchSidos = async () => {
     try {
-      const data = await getRankings({
-        type,
-        period,
-        page,
-        limit: 10,
-      });
+      const response = await getSidos();
+      const data = (response.data.data || []).map(normalizeRegionItem);
+      const filteredData = data.filter(isDisplayRegion);
 
-      console.log("랭킹 응답:", data);
+      setSidos(filteredData);
 
-      setRankingList(data.data ?? []);
+      if (filteredData.length > 0) {
+        setSelectedSidoCode((prev) => prev || filteredData[0].regionCode);
+      }
     } catch (err) {
-      console.error("랭킹 조회 실패:", err);
-      setError("랭킹 정보를 불러오지 못했습니다.");
-    } finally {
-      setLoading(false);
+      console.error("시/도 조회 실패:", err);
     }
   };
 
+  const fetchSigungus = async (sidoCode) => {
+    if (!sidoCode) {
+      setSigungus([]);
+      setSelectedSigunguCode("");
+      return;
+    }
+
+    try {
+      setRegionLoading(true);
+
+      const response = await getSigungus(sidoCode);
+      const data = (response.data.data || []).map(normalizeRegionItem);
+      const filteredData = data.filter(isDisplayRegion);
+
+      const sortedData = [...filteredData].sort((a, b) =>
+        a.name.localeCompare(b.name, "ko-KR"),
+      );
+
+      setSigungus(sortedData);
+
+      if (sortedData.length === 0) {
+        setSelectedSigunguCode("");
+        return;
+      }
+
+      setSelectedSigunguCode((prev) => {
+        const exists = sortedData.some((item) => item.regionCode === prev);
+        return exists ? prev : sortedData[0].regionCode;
+      });
+    } catch (err) {
+      console.error("시/군/구 조회 실패:", err);
+      setSigungus([]);
+      setSelectedSigunguCode("");
+    } finally {
+      setRegionLoading(false);
+    }
+  };
+
+  const fetchRanking = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      let response;
+
+      if (tab === "national") {
+        response = await getNationalRanking();
+      }
+
+      if (tab === "sido") {
+        if (!selectedSidoCode) {
+          setRankingData(getEmptyRankingData());
+          return;
+        }
+
+        response = await getRegionalRanking(selectedSidoCode);
+      }
+
+      if (tab === "sigungu") {
+        if (!selectedSigunguCode) {
+          setRankingData(getEmptyRankingData());
+          return;
+        }
+
+        response = await getRegionalRanking(selectedSigunguCode);
+      }
+
+      const normalized = normalizeRankingData(response.data.data);
+      setRankingData(normalized);
+    } catch (err) {
+      console.error("랭킹 조회 실패:", err);
+      setError("랭킹 정보를 불러오지 못했습니다.");
+      setRankingData(getEmptyRankingData());
+    } finally {
+      setLoading(false);
+    }
+  }, [tab, selectedSidoCode, selectedSigunguCode]);
+
   useEffect(() => {
-    fetchRankings();
-  }, [type, period, page]);
+    fetchSidos();
+  }, []);
+
+  useEffect(() => {
+    if (selectedSidoCode) {
+      fetchSigungus(selectedSidoCode);
+    }
+  }, [selectedSidoCode]);
+
+  useEffect(() => {
+    setShowDetail(false);
+    fetchRanking();
+  }, [fetchRanking]);
 
   return (
     <Layout isLoggedIn={isLoggedIn}>
-      <div style={{ padding: "24px" }}>
-        <h1>랭킹</h1>
-        <p>봉사활동 참여도를 확인해보세요.</p>
-
-        <div style={{ marginTop: "20px" }}>
-          <strong>랭킹 타입</strong>
-          <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-            <button onClick={() => setType("user")}>유저별</button>
-            <button onClick={() => setType("region")}>지역별</button>
-          </div>
+      <div className="ranking-page">
+        <div className="ranking-top-section">
+          <h1 className="ranking-title">{pageTitle}</h1>
+          <p className="ranking-subtitle">
+            누적 승인 봉사시간 기준으로 랭킹을 확인해보세요.
+          </p>
         </div>
 
-        <div style={{ marginTop: "20px" }}>
-          <strong>기간</strong>
-          <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-            <button onClick={() => setPeriod("daily")}>일간</button>
-            <button onClick={() => setPeriod("weekly")}>주간</button>
-            <button onClick={() => setPeriod("monthly")}>월간</button>
-            <button onClick={() => setPeriod("yearly")}>연간</button>
-          </div>
-        </div>
+        {!showDetail && (
+          <>
+            <RankingTabs tab={tab} onChangeTab={setTab} />
 
-        <div style={{ marginTop: "32px" }}>
-          {loading && <p>불러오는 중...</p>}
-          {error && <p>{error}</p>}
+            <RankingFilter
+              tab={tab}
+              sidos={sidos}
+              sigungus={sigungus}
+              selectedSidoCode={selectedSidoCode}
+              selectedSigunguCode={selectedSigunguCode}
+              onChangeSido={setSelectedSidoCode}
+              onChangeSigungu={setSelectedSigunguCode}
+              regionLoading={regionLoading}
+            />
 
-          {!loading && !error && rankingList.length === 0 && (
-            <p>표시할 랭킹이 없습니다.</p>
-          )}
-
-          {!loading &&
-            !error &&
-            rankingList.map((item, index) => (
-              <div
-                key={item.id ?? index}
-                style={{
-                  border: "1px solid #ccc",
-                  borderRadius: "8px",
-                  padding: "16px",
-                  marginBottom: "12px",
-                }}
-              >
-                <p>순위: {item.rank ?? index + 1}</p>
-                <p>이름: {item.nickname ?? item.regionName ?? "이름 없음"}</p>
-                <p>봉사시간: {item.totalVolunteerHours ?? 0}시간</p>
-                <p>봉사횟수: {item.totalVolunteerCount ?? 0}회</p>
+            {rankingData.regionName && tab !== "national" && (
+              <div className="ranking-current-region">
+                현재 기준 지역: {rankingData.regionName}
               </div>
-            ))}
-        </div>
+            )}
+          </>
+        )}
 
-        <div style={{ marginTop: "20px", display: "flex", gap: "8px" }}>
-          <button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-          >
-            이전
-          </button>
-          <span>{page} 페이지</span>
-          <button onClick={() => setPage((prev) => prev + 1)}>다음</button>
-        </div>
+        {loading && <p className="ranking-message">불러오는 중...</p>}
+        {error && <p className="ranking-error">{error}</p>}
+
+        {!loading && !error && !showDetail && (
+          <>
+            <Top3Section
+              top3={rankingData.top3}
+              tab={tab}
+              shouldShowRegion={shouldShowRegion}
+              onClickDetail={() => setShowDetail(true)}
+            />
+
+            <MyRankSection
+              myRank={rankingData.myRank}
+              tab={tab}
+              shouldShowRegion={shouldShowRegion}
+            />
+          </>
+        )}
+
+        {!loading && !error && showDetail && (
+          <RankingDetailSection
+            top100={rankingData.top100}
+            tab={tab}
+            shouldShowRegion={shouldShowRegion}
+            onClickBack={() => setShowDetail(false)}
+          />
+        )}
       </div>
     </Layout>
   );
-};
+}
 
 export default RankingPage;
