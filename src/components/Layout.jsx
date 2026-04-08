@@ -1,9 +1,10 @@
 import Header from "./Header";
 
-export default function Layout({ children, isLoggedIn }) {
+export default function Layout({ children }) {
+
   return (
     <div className="app-shell">
-      <Header isLoggedIn={isLoggedIn} />
+      <Header />
       <main className="page-container">{children}</main>
     </div>
   );

@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { decodeToken, isTokenExpired } from "../utils/auth";
-import { 
-    loginUser,
-    signupUser,
-    sendCode,
-    verifyEmailCode,
-} from "../api/auth";
+import { loginUser, signupUser, sendCode, verifyEmailCode } from "../api/auth";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -18,14 +13,14 @@ const AuthProvider = ({ children }) => {
 
   // 초기 토큰 체크 (기존과 동일)
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
     if (token && !isTokenExpired(token)) {
       const decoded = decodeToken(token);
       setUser(decoded);
       setIsLoggedIn(true);
       setIsAdmin(decoded?.role === "admin");
     } else {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("token");
     }
     setLoading(false);
   }, []);
@@ -40,7 +35,7 @@ const AuthProvider = ({ children }) => {
       const response = await loginUser(loginData); // ← API 함수 호출
       const { token, user } = response.data.data;
 
-      localStorage.setItem("accessToken", token);
+      localStorage.setItem("token", token);
       setUser(user);
       setIsLoggedIn(true);
       setIsAdmin(user?.role === "admin");
