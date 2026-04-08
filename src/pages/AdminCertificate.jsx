@@ -1,81 +1,95 @@
-import {  useEffect, useState } from "react";
-import {approveUser, rejectUser, getCertificates} from "../../admin"
-
+import { useEffect, useState } from "react";
+import { reviewCertificate, getPendingCertificates } from "../api/admin";
 
 const AdminCertificate = () => {
-    const [list, setlist] = useState([]);
-    const [form, setForm] = useState([]);
+  const [list, setList] = useState([]);
+  const [reasons, setReasons] = useState({});
 
-    const fetchadmin =async () => {
-        const res = await getCertificates();
-        setlist(res.data);   
-    };
-
-    useEffect (() => {
-      fetchadmin();
-      },[]);
-
-const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const fetchAdmin = async () => {
+    const res = await getPendingCertificates();
+    return res.data.data || [];
   };
 
-const handleApprove = async(id) =>{
-    await approveUser(id);
-    fetchadmin();
-}
+  useEffect(() => {
+    const load = async () => {
+      const data = await fetchAdmin();
+      setList(data);
+    };
 
-const handleReject = async(id) => {
-  const reason = reason[id];
+    load();
+  }, []);
 
-  if(!reason || !reason.trim()){
-    alert("거절 사유 입력하세요");
-    return;
-  }
-  await rejectUser({
-    id, reason, status: "rejected",
-  });
-    fetchadmin();
-};
+  // input 변경 (id 기준)
+  const handleChange = (id, value) => {
+    setReasons((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
 
+  // 승인
+  const handleApprove = async (id) => {
+    await reviewCertificate(id, "APPROVED", "승인");
+    fetchAdmin();
+  };
 
-return(
+  // 거절
+  const handleReject = async (id) => {
+    const reason = reasons[id];
+
+    if (!reason || !reason.trim()) {
+      alert("거절 사유 입력하세요");
+      return;
+    }
+
+    await reviewCertificate(id, "REJECTED", reason);
+    fetchAdmin();
+  };
+
+  return (
     <div className="card">
-      <h2>승인관리</h2>
+      <h2>인증서 승인 관리</h2>
+
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>이름</th>
-            <th>주소</th>
-            <th>제출날짜</th>
+            <th>유저ID</th>
             <th>상태</th>
+            <th>액션</th>
           </tr>
         </thead>
+
         <tbody>
           {list.length === 0 ? (
             <tr>
-              <td colSpan="5">데이터가 없습니다.</td>
+              <td colSpan="4">데이터가 없습니다.</td>
             </tr>
           ) : (
             list.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.name}</td>
-                <td>{item.submitted_at}</td>
+              <tr key={item.certificateId}>
+                <td>{item.certificateId}</td>
+                <td>{item.userId}</td>
                 <td>{item.status}</td>
+
                 <td>
                   <div className="row">
-                   <button onClick={() => handleApprove(item.id)}>승인</button>
-                  <button onClick={() => handleReject(item.id)}>거부</button>
-                  <form onSubmit={handleReject}>
-                  <div className="row">
-                  <input type = "text" 
-                    placeholder = "거절사유" 
-                    value = {form.reason}
-                    onChange={handleChange}
+                    <button onClick={() => handleApprove(item.certificateId)}>
+                      승인
+                    </button>
+
+                    <button onClick={() => handleReject(item.certificateId)}>
+                      거절
+                    </button>
+
+                    <input
+                      type="text"
+                      placeholder="거절 사유"
+                      value={reasons[item.certificateId] || ""}
+                      onChange={(e) =>
+                        handleChange(item.certificateId, e.target.value)
+                      }
                     />
-                  </div>
-                  </form>
                   </div>
                 </td>
               </tr>
@@ -84,7 +98,7 @@ return(
         </tbody>
       </table>
     </div>
-         
-    );
+  );
 };
+
 export default AdminCertificate;
