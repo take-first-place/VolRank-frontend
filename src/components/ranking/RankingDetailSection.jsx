@@ -1,14 +1,15 @@
 import {
   getHoursValue,
-  getIsMeValue,
   getNicknameValue,
+  getRankClassName,
+  getRankIcon,
   getRankValue,
   getRegionNameValue,
 } from "../../utils/rankingUtils";
 
 function RankingDetailSection({ top100, tab, shouldShowRegion, onClickBack }) {
   return (
-    <section className="ranking-section">
+    <section className="ranking-section ranking-card-section">
       <div className="ranking-section-header">
         <h2 className="ranking-section-title">TOP 100 상세</h2>
         <button className="ranking-detail-button" onClick={onClickBack}>
@@ -21,28 +22,29 @@ function RankingDetailSection({ top100, tab, shouldShowRegion, onClickBack }) {
       ) : (
         <div className="ranking-list">
           {top100.map((item, index) => {
-            const rank = getRankValue(item, index + 1);
-            const topRankClass = rank <= 3 ? ` rank-${rank}` : "";
+            const displayRank = getRankValue(item, index + 1);
+            const rankClassName = getRankClassName(item);
+            const rankIcon = getRankIcon(displayRank);
             const regionName = getRegionNameValue(item, tab);
 
             return (
               <div
-                className={`${
-                  getIsMeValue(item)
-                    ? "ranking-item ranking-item-me"
-                    : "ranking-item"
-                }${topRankClass}`}
-                key={`top100-${item.user_id ?? item.nickname ?? "unknown"}-${rank}-${index}`}
+                className={`ranking-item ${rankClassName}`}
+                key={`top100-${item.user_id ?? item.nickname ?? "unknown"}-${displayRank}-${index}`}
               >
                 <div className="ranking-item-left">
-                  <p className="ranking-item-rank">{rank}위</p>
+                  <div className="ranking-item-rank-box">
+                    {rankIcon && (
+                      <span className="ranking-rank-icon">{rankIcon}</span>
+                    )}
+                    <p className="ranking-item-rank">{displayRank}위</p>
+                  </div>
+
                   <div>
                     <p className="ranking-item-name">
                       {getNicknameValue(item)}
-                      {getIsMeValue(item) && (
-                        <span className="ranking-me-badge">나</span>
-                      )}
                     </p>
+
                     {shouldShowRegion && regionName && (
                       <p className="ranking-item-region">{regionName}</p>
                     )}
@@ -50,7 +52,9 @@ function RankingDetailSection({ top100, tab, shouldShowRegion, onClickBack }) {
                 </div>
 
                 <div className="ranking-item-right">
-                  <p>{getHoursValue(item)}시간</p>
+                  <p className="ranking-item-hours">
+                    {getHoursValue(item)}시간
+                  </p>
                 </div>
               </div>
             );
