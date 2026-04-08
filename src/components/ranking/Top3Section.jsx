@@ -2,13 +2,15 @@ import {
   getHoursValue,
   getIsMeValue,
   getNicknameValue,
+  getRankClassName,
+  getRankIcon,
   getRankValue,
   getRegionNameValue,
 } from "../../utils/rankingUtils";
 
 function Top3Section({ top3, tab, shouldShowRegion, onClickDetail }) {
   return (
-    <section className="ranking-section">
+    <section className="ranking-section ranking-card-section">
       <div className="ranking-section-header">
         <h2 className="ranking-section-title">TOP 3</h2>
         <button className="ranking-detail-button" onClick={onClickDetail}>
@@ -21,24 +23,33 @@ function Top3Section({ top3, tab, shouldShowRegion, onClickDetail }) {
       ) : (
         <div className="ranking-top3-list">
           {top3.map((item, index) => {
-            const rank = getRankValue(item, index + 1);
+            const displayRank = getRankValue(item, index + 1);
+            const rankClassName = getRankClassName(item);
             const regionName = getRegionNameValue(item, tab);
+            const rankIcon = getRankIcon(displayRank);
+            const isMe = getIsMeValue(item);
 
             return (
               <div
-                className={`ranking-top3-card rank-${rank}`}
-                key={`top3-${item.user_id ?? item.nickname ?? "unknown"}-${rank}-${index}`}
+                className={`ranking-top3-card ${rankClassName}${isMe ? " ranking-top3-card-me" : ""}`}
+                key={`top3-${item.user_id ?? item.nickname ?? "unknown"}-${displayRank}-${index}`}
               >
-                <p className="ranking-top3-rank">{rank}위</p>
+                <div className="ranking-rank-badge">
+                  {rankIcon && (
+                    <span className="ranking-rank-icon">{rankIcon}</span>
+                  )}
+                  <span className="ranking-top3-rank">{displayRank}위</span>
+                </div>
+
                 <p className="ranking-top3-name">
                   {getNicknameValue(item)}
-                  {getIsMeValue(item) && (
-                    <span className="ranking-me-badge">나</span>
-                  )}
+                  {isMe && <span className="ranking-me-badge">MY</span>}
                 </p>
+
                 {shouldShowRegion && regionName && (
                   <p className="ranking-top3-region">{regionName}</p>
                 )}
+
                 <p className="ranking-top3-hours">{getHoursValue(item)}시간</p>
               </div>
             );
