@@ -1,19 +1,30 @@
 import api from "./axios";
 
-// 인증서 승인 / 반려
-export const reviewCertificate = (certificateId, status, reason) => {
-  return api.patch(`/certificates/${certificateId}/review`, {
-    status, // "APPROVED" | "REJECTED"
-    reason,
-  });
+// 관리자 인증서 전체 목록 조회
+export const getAdminCertificates = async () => {
+  const response = await api.get("/api/certificates/admin");
+  return response.data;
 };
 
 // 승인 대기 목록 조회 (관리자)
-export const getPendingCertificates = () => {
-  return api.get("/certificates/admin/pending");
+export const getPendingCertificates = async () => {
+  const response = await api.get("/api/certificates/admin/pending");
+  return response.data;
 };
 
-// 특정 참여 인증서 조회
-export const getCertificatesByParticipation = (participationId) => {
-  return api.get(`/certificates/${participationId}`);
+// 인증서 승인 / 반려
+export const reviewCertificate = async ({
+  certificateId,
+  status,
+  rejectedReason = "",
+}) => {
+  const response = await api.patch(
+    `/api/certificates/${certificateId}/review`,
+    {
+      status,
+      rejectedReason,
+    },
+  );
+
+  return response.data;
 };
