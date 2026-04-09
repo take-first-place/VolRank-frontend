@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { decodeToken, isTokenExpired } from "../utils/auth";
+import { isTokenExpired } from "../utils/auth";
+import { jwtDecode } from "jwt-decode";
 import { loginUser, signupUser, sendCode, verifyEmailCode } from "../api/auth";
 
 const AuthProvider = ({ children }) => {
@@ -15,7 +16,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token && !isTokenExpired(token)) {
-      const decoded = decodeToken(token);
+      const decoded = jwtDecode(token);
       setUser(decoded);
       setIsLoggedIn(true);
       setIsAdmin(decoded?.role === "admin");

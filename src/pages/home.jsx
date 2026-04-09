@@ -2,46 +2,35 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { getNationalRanking } from "../api/ranking";
+import { useAuth } from "../hooks/useAuth"; // ✅ 추가
 import "../styles/home.css";
 
-const getRankValue = (item, fallback = "") => {
-  return item?.rankPosition ?? item?.rank_position ?? fallback;
-};
+// 유틸리티 함수
+const getRankValue = (item) => item?.rankPosition ?? item?.rank_position ?? "";
+const getHoursValue = (item) => item?.totalHours ?? item?.total_hours ?? 0;
+const getNickname = (item) => item?.nickname ?? "";
+const getRegionName = (item) =>
+  item?.fullRegionName ??
+  item?.full_region_name ??
+  item?.regionName ??
+  item?.region_name ??
+  "";
 
-const getHoursValue = (item) => {
-  return item?.totalHours ?? item?.total_hours ?? 0;
-};
-
-const getNicknameValue = (item) => {
-  return item?.nickname ?? "";
-};
-
-const getRegionNameValue = (item) => {
-  return (
-    item?.fullRegionName ??
-    item?.full_region_name ??
-    item?.regionName ??
-    item?.region_name ??
-    ""
-  );
-};
-
-const Home = ({ isLoggedIn }) => {
+export const Home = () => {
+  // ✅ 화살표 함수 + isLoggedIn props 제거
   const navigate = useNavigate();
-
+  const { isLoggedIn } = useAuth(); // ✅ Context에서 가져옴
   const [top3, setTop3] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchTop3Ranking = async () => {
+  const fetchTop3 = async () => {
     try {
       setLoading(true);
-
       const response = await getNationalRanking();
       const top100 = response?.data?.data?.top100 || [];
-
       setTop3(top100.slice(0, 3));
     } catch (error) {
-      console.error("메인 전국 TOP 3 조회 실패:", error);
+      console.error("TOP 3 조회 실패:", error);
       setTop3([]);
     } finally {
       setLoading(false);
@@ -49,12 +38,35 @@ const Home = ({ isLoggedIn }) => {
   };
 
   useEffect(() => {
-    fetchTop3Ranking();
+    fetchTop3();
   }, []);
 
+  // Podium 아이템 렌더링
+  const renderPodiumItem = (item, rank, medal, baseClass) => {
+    if (!item) return null;
+
+    return (
+      <div className={`podium-item ${baseClass}`}>
+        <div className={`podium-card ${rank === 1 ? "champion" : ""}`}>
+          <p className="podium-medal">{medal}</p>
+          <p className="podium-rank">{getRankValue(item) || rank}위</p>
+          <p className="podium-name">{getNickname(item)}</p>
+          {getRegionName(item) && (
+            <p className="podium-region">{getRegionName(item)}</p>
+          )}
+          <p className="podium-hours">{getHoursValue(item)}시간</p>
+        </div>
+        <div className={`podium-base ${baseClass}-base`}>{rank}</div>
+      </div>
+    );
+  };
+
   return (
-    <Layout isLoggedIn={isLoggedIn}>
+    <Layout>
+      {" "}
+      {/* ✅ isLoggedIn props 제거 */}
       <div className="home-page">
+        {/* Hero 섹션 */}
         <section className="home-hero">
           <p className="home-badge">VolRank</p>
           <h1 className="home-title">봉사활동 랭킹을 한눈에 확인하세요</h1>
@@ -90,6 +102,7 @@ const Home = ({ isLoggedIn }) => {
           </div>
         </section>
 
+        {/* TOP 3 섹션 */}
         <section className="home-ranking-section">
           <div className="home-section-header">
             <h2>전국 TOP 3</h2>
@@ -107,56 +120,9 @@ const Home = ({ isLoggedIn }) => {
             <p className="home-message">표시할 전국 랭킹 정보가 없습니다.</p>
           ) : (
             <div className="podium">
-              {top3[1] && (
-                <div className="podium-item second">
-                  <div className="podium-card">
-                    <p className="podium-medal">🥈</p>
-                    <p className="podium-rank">{getRankValue(top3[1], 2)}위</p>
-                    <p className="podium-name">{getNicknameValue(top3[1])}</p>
-                    {getRegionNameValue(top3[1]) && (
-                      <p className="podium-region">
-                        {getRegionNameValue(top3[1])}
-                      </p>
-                    )}
-                    <p className="podium-hours">{getHoursValue(top3[1])}시간</p>
-                  </div>
-                  <div className="podium-base second-base">2</div>
-                </div>
-              )}
-
-              {top3[0] && (
-                <div className="podium-item first">
-                  <div className="podium-card champion">
-                    <p className="podium-medal">👑</p>
-                    <p className="podium-rank">{getRankValue(top3[0], 1)}위</p>
-                    <p className="podium-name">{getNicknameValue(top3[0])}</p>
-                    {getRegionNameValue(top3[0]) && (
-                      <p className="podium-region">
-                        {getRegionNameValue(top3[0])}
-                      </p>
-                    )}
-                    <p className="podium-hours">{getHoursValue(top3[0])}시간</p>
-                  </div>
-                  <div className="podium-base first-base">1</div>
-                </div>
-              )}
-
-              {top3[2] && (
-                <div className="podium-item third">
-                  <div className="podium-card">
-                    <p className="podium-medal">🥉</p>
-                    <p className="podium-rank">{getRankValue(top3[2], 3)}위</p>
-                    <p className="podium-name">{getNicknameValue(top3[2])}</p>
-                    {getRegionNameValue(top3[2]) && (
-                      <p className="podium-region">
-                        {getRegionNameValue(top3[2])}
-                      </p>
-                    )}
-                    <p className="podium-hours">{getHoursValue(top3[2])}시간</p>
-                  </div>
-                  <div className="podium-base third-base">3</div>
-                </div>
-              )}
+              {renderPodiumItem(top3[1], 2, "🥈", "second")}
+              {renderPodiumItem(top3[0], 1, "👑", "first")}
+              {renderPodiumItem(top3[2], 3, "🥉", "third")}
             </div>
           )}
         </section>

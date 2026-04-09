@@ -1,3 +1,10 @@
+export const getRankIcon = (rank) => {
+  if (Number(rank) === 1) return "👑";
+  if (Number(rank) === 2) return "🥈";
+  if (Number(rank) === 3) return "🥉";
+  return null;
+};
+
 export const getRegionCodeValue = (item) => {
   return String(item?.regionCode ?? item?.region_code ?? "");
 };
@@ -18,6 +25,16 @@ export const normalizeRankingData = (data) => {
     myRank: data?.myRank || myRankFromTop100 || null,
     regionName: data?.regionName || "",
   };
+};
+
+export const getRankClassName = (item) => {
+  const rank = item?.rankPosition ?? item?.rank_position;
+
+  if (Number(rank) === 1) return "rank-1";
+  if (Number(rank) === 2) return "rank-2";
+  if (Number(rank) === 3) return "rank-3";
+
+  return "";
 };
 
 export const getRankValue = (item, fallback = "") => {

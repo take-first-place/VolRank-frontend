@@ -40,7 +40,8 @@ const UserLoginPage = ({ isLoggedIn }) => {
       localStorage.setItem("token", token);
 
       alert("로그인 성공!");
-      navigate("/");
+      // navigate("/");
+      window.location.href = "/";
     } catch (error) {
       console.error("로그인 실패:", error);
 
