@@ -5,4 +5,12 @@ export const getUserById = (userId) => {
   return api.get(`/api/users/${userId}`);
 };
 
-export default { getUserById };
+// 마이페이지 요약 조회
+export const getMyPageSummary = () => {
+  return api.get("/api/users/me/summary");
+};
+
+export default {
+  getUserById,
+  getMyPageSummary,
+};

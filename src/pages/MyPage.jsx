@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import certificateApi from "../api/certificate";
+import userApi from "../api/users";
 import { useUser } from "../hooks/useUser";
 import "../styles/mypage.css";
 
@@ -9,8 +10,11 @@ export const MyPage = () => {
   const { user, loading: userLoading, error: userError } = useUser();
 
   const [certificates, setCertificates] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
     activityTitle: "",
@@ -28,10 +32,14 @@ export const MyPage = () => {
 
   const regionName = useMemo(() => {
     return (
+      user?.full_region_name ||
       user?.region_name ||
       user?.regionName ||
       user?.region ||
-      user?.fullRegionName ||
+      user?.region_full_name ||
+      user?.regionFullName ||
+      user?.sidoSigungu ||
+      user?.addressRegion ||
       "지역 정보 없음"
     );
   }, [user]);
@@ -50,8 +58,31 @@ export const MyPage = () => {
     }
   };
 
+  const fetchSummary = async () => {
+    try {
+      setSummaryLoading(true);
+      const response = await userApi.getMyPageSummary();
+      setSummary(response?.data?.data || null);
+    } catch (error) {
+      console.error("마이페이지 요약 로딩 실패:", error);
+      setSummary(null);
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    if (name === "startDate" || name === "endDate") {
+      const normalizedValue = value.slice(0, 10);
+
+      setForm((prev) => ({
+        ...prev,
+        [name]: normalizedValue,
+      }));
+      return;
+    }
 
     setForm((prev) => ({
       ...prev,
@@ -78,6 +109,10 @@ export const MyPage = () => {
       requestedVolunteerHour: "",
       file: null,
     });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleUpload = async () => {
@@ -114,13 +149,14 @@ export const MyPage = () => {
       formData.append("startDate", startDate);
       formData.append("endDate", endDate);
       formData.append("requestedVolunteerHour", requestedVolunteerHour);
-      formData.append("file", file);
+      formData.append("certificate", file);
 
       await certificateApi.createCertificate(formData);
 
       alert("인증서 업로드 성공");
       resetForm();
       fetchCertificates();
+      fetchSummary();
     } catch (error) {
       console.error("인증서 업로드 실패:", error);
 
@@ -137,6 +173,7 @@ export const MyPage = () => {
 
   useEffect(() => {
     fetchCertificates();
+    fetchSummary();
   }, []);
 
   if (userLoading) {
@@ -183,13 +220,6 @@ export const MyPage = () => {
 
             <div className="mypage-user-info-grid mypage-user-info-grid-3">
               <div className="mypage-info-box">
-                <span className="mypage-info-label">닉네임</span>
-                <strong className="mypage-info-value">
-                  {user?.nickname || "-"}
-                </strong>
-              </div>
-
-              <div className="mypage-info-box">
                 <span className="mypage-info-label">이메일</span>
                 <strong className="mypage-info-value">
                   {user?.email || "-"}
@@ -199,6 +229,15 @@ export const MyPage = () => {
               <div className="mypage-info-box">
                 <span className="mypage-info-label">지역</span>
                 <strong className="mypage-info-value">{regionName}</strong>
+              </div>
+
+              <div className="mypage-info-box">
+                <span className="mypage-info-label">총 봉사 시간</span>
+                <strong className="mypage-info-value">
+                  {summaryLoading
+                    ? "로딩 중..."
+                    : `${summary?.totalVolunteerHour ?? 0}시간`}
+                </strong>
               </div>
             </div>
           </div>
@@ -287,6 +326,7 @@ export const MyPage = () => {
                 <label htmlFor="certificateFile">인증서 파일</label>
                 <input
                   id="certificateFile"
+                  ref={fileInputRef}
                   className="mypage-file-input"
                   type="file"
                   onChange={handleFileChange}
@@ -326,7 +366,6 @@ export const MyPage = () => {
                   const organizationName = cert?.organization_name || "";
                   const status = cert?.status || "PENDING";
                   const fileUrl = cert?.file_url || "";
-                  const submissionNo = cert?.submission_no;
                   const rejectedReason = cert?.rejected_reason || "";
 
                   return (
@@ -342,9 +381,6 @@ export const MyPage = () => {
 
                       <div className="mypage-certificate-meta">
                         <span>{organizationName}</span>
-                        {submissionNo ? (
-                          <span>{submissionNo}차 제출</span>
-                        ) : null}
                       </div>
 
                       {fileUrl ? (

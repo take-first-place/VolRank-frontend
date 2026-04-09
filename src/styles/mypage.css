@@ -130,6 +130,7 @@
   border-radius: 22px;
   padding: 24px;
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
+  min-height: 0;
 }
 
 .mypage-card-header {
@@ -263,6 +264,9 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .mypage-certificate-item {
