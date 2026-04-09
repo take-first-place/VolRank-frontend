@@ -1,56 +1,241 @@
+
+
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
 .mypage {
   max-width: 800px;
   margin: 0 auto;
-  padding: 60px 20px;
-  color: white;
+  padding: 48px 20px 80px;
+  background-color: #f5f5f5;
+  color: #111827;
+  box-sizing: border-box;
+  min-height: 100vh;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.mypage-title {
-  font-size: 40px;
+/* ── 상단 바 ── */
+.mypage-topbar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.mypage-back-button {
+  position: absolute;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
   font-weight: 700;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.mypage-back-button:hover {
+  transform: translateY(-1px);
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* ── 제목 / 서브타이틀 ── */
+.mypage-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #111827;
   text-align: center;
-  margin-bottom: 10px;
 }
 
 .mypage-subtitle {
   text-align: center;
-  color: #aaa;
-  margin-bottom: 40px;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 6px 0 36px;
 }
 
+/* ── 섹션 ── */
 .mypage-section {
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
+.mypage-section-label {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── 패널 (카드) ── */
 .mypage-box {
-  background-color: #1c1c1c;
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 10px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
 }
 
+.mypage-box-title {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.mypage-box-subtitle {
+  margin: 0 0 18px;
+  color: #6b7280;
+  font-size: 0.88rem;
+}
+
+/* ── 정보 그리드 ── */
+.mypage-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mypage-info-item label {
+  display: block;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.mypage-info-item span {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ── 자격증 아이템 ── */
 .certificate-item {
-  background-color: #2a2a2a;
-  padding: 12px;
-  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
   margin-bottom: 10px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
+.certificate-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.certificate-item-name {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.certificate-item-date {
+  margin: 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* ── 배지 ── */
+.certificate-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #bfdbfe;
+  white-space: nowrap;
+}
+
+.certificate-badge.pending {
+  background: #fefce8;
+  color: #ca8a04;
+  border-color: #fde68a;
+}
+
+.certificate-badge.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+/* ── 빈 상태 ── */
 .mypage-empty-text {
-  color: #888;
-  margin-top: 10px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  padding: 16px 0;
+  font-weight: 600;
 }
 
+/* ── 버튼 ── */
 button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  background-color: #555;
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   cursor: pointer;
+  margin-top: 6px;
+  box-sizing: border-box;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 button:hover {
-  background-color: #777;
+  transform: translateY(-1px);
+  background: #f9fafb;
+  border-color: #9ca3af;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+button.primary {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+button.primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
 }
