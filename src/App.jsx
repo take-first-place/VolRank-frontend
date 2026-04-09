@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import useAuth from "./hooks/useAuth";
 import Home from "./pages/home";
 import Signup from "./pages/Signup";
@@ -7,6 +8,7 @@ import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
 import AdminPage from "./pages/AdminPage";
 import VolunteerPage from "./pages/VolunteerPage";
+import VolunteerDetail from './pages/VolunteerDetailPage';
 import NotFoundPage from "./pages/NotFoundPage";
 
 // AdminRoute가 없으면 임시로 인라인 처리
@@ -25,11 +27,12 @@ const App = () => {
         path="/ranking"
         element={<RankingPage isLoggedIn={isLoggedIn} />}
       />
-      <Route
-        path="/volunteers"
-        element={<VolunteerPage isLoggedIn={isLoggedIn} />}
-      />
-
+      
+      <Route path="/volunteers">
+        <Route index element={<VolunteerPage isLoggedIn={isLoggedIn} />} />
+        <Route path=":id" element={<VolunteerDetail isLoggedIn={isLoggedIn} />} />
+      </Route>
+        
       {/* 비로그인 전용 */}
       <Route
         path="/login"
