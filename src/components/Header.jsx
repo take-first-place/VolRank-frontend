@@ -2,10 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
-  const { isLoggedIn, user, logout } = useAuth(); 
-
-  console.log("Header isLoggedIn:", isLoggedIn);
-  console.log(user);
+  const { isLoggedIn, isAdmin, user, logout } = useAuth();
 
   return (
     <header className="header">
@@ -24,6 +21,11 @@ const Header = () => {
           <Link to="/ranking" className="nav-link">
             랭킹
           </Link>
+          {isAdmin && (
+            <Link to="/admin" className="nav-link">
+              관리자 페이지
+            </Link>
+          )}
         </nav>
 
         <div className="auth-menu">

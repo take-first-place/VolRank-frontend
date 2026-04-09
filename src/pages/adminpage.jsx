@@ -1,113 +1,198 @@
-import { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import AdminSidebar from "../components/adminsidebar";
-import CertificateList from "../components/CertificateList";
-import { certificateApi } from "../api/certificate";
-import { styles } from "../styles/admin.style";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAdminCertificates, reviewCertificate } from "../api/admin";
+import AdminCertificateCard from "../components/admin/AdminCertificateCard";
+import {
+  filterCertificates,
+  getStatusCounts,
+  sortCertificates,
+} from "../utils/adminCertificateUtils";
+import "../styles/adminPage.css";
+import "../styles/adminPageResponsive.css";
 
-// ─── AdminPage 루트 ────────────────────────────────────────
-const AdminPage = () => {
-  const [certs, setCerts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("all");
+const STATUS_TABS = [
+  { key: "ALL", label: "전체" },
+  { key: "PENDING", label: "대기" },
+  { key: "APPROVED", label: "승인" },
+  { key: "REJECTED", label: "반려" },
+];
 
-  // 인증서 데이터 로드
+const SORT_OPTIONS = [
+  { key: "submitted_at", label: "제출일" },
+  { key: "reviewed_at", label: "검토일" },
+];
+
+function AdminPage() {
+  const navigate = useNavigate();
+
+  const [certificates, setCertificates] = useState([]);
+  const [activeTab, setActiveTab] = useState("ALL");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [sortField, setSortField] = useState("submitted_at");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [loading, setLoading] = useState(false);
+  const [reviewLoadingId, setReviewLoadingId] = useState(null);
+
+  const fetchCertificates = async () => {
+    try {
+      setLoading(true);
+
+      const response = await getAdminCertificates();
+      const list = response?.data?.certificates || response?.data || [];
+
+      setCertificates(Array.isArray(list) ? list : []);
+    } catch (error) {
+      console.error("관리자 인증서 목록 조회 실패:", error);
+      setCertificates([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCertificates = async () => {
-      try {
-        setLoading(true);
-        const response = await certificateApi.getAllCertificates();
-        // API 응답 구조에 따라 조정 필요
-        setCerts(response.data || []);
-      } catch (err) {
-        setError("인증서 데이터를 불러오는데 실패했습니다.");
-        console.error("Failed to fetch certificates:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCertificates();
   }, []);
 
-  const pendingCount = certs.filter((c) => c.status === "pending").length;
+  const statusCounts = useMemo(() => {
+    return getStatusCounts(certificates);
+  }, [certificates]);
 
-  if (loading) {
-    return (
-      <div style={styles.container}>
-        <AdminSidebar pendingCount={pendingCount} />
-        <main style={styles.main}>
-          <div style={styles.content}>
-            <p style={styles.placeholderText}>로딩 중...</p>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  const filteredCertificates = useMemo(() => {
+    const filtered = filterCertificates({
+      certificates,
+      activeTab,
+      searchKeyword,
+    });
 
-  if (error) {
-    return (
-      <div style={styles.container}>
-        <AdminSidebar pendingCount={pendingCount} />
-        <main style={styles.main}>
-          <div style={styles.content}>
-            <p style={{ color: "#ef4444" }}>{error}</p>
-          </div>
-        </main>
-      </div>
-    );
-  }
+    return sortCertificates({
+      list: filtered,
+      sortField,
+      sortOrder,
+    });
+  }, [certificates, activeTab, searchKeyword, sortField, sortOrder]);
+
+  const handleReview = async (certificateId, status) => {
+    try {
+      const rejectedReason =
+        status === "REJECTED" ? window.prompt("반려 사유를 입력해주세요.") : "";
+
+      if (status === "REJECTED" && !rejectedReason?.trim()) {
+        return;
+      }
+
+      setReviewLoadingId(certificateId);
+
+      await reviewCertificate({
+        certificateId,
+        status,
+        rejectedReason: rejectedReason?.trim() || "",
+      });
+
+      await fetchCertificates();
+    } catch (error) {
+      console.error(`인증서 ${status} 처리 실패:`, error);
+    } finally {
+      setReviewLoadingId(null);
+    }
+  };
 
   return (
-    <div style={styles.container}>
-      <AdminSidebar pendingCount={pendingCount} />
-
-      <main style={styles.main}>
-        {/* 페이지 헤더 */}
-        <div style={styles.header}>
-          <h1 style={styles.headerTitle}>인증서 관리</h1>
-          <p style={styles.headerSub}>
-            봉사활동 인증서를 검토하고 승인 또는 반려하세요.
-          </p>
+    <div className="admin-page">
+      <div className="admin-page-inner">
+        <div className="admin-topbar">
+          <button
+            type="button"
+            className="admin-back-button"
+            onClick={() => navigate(-1)}
+          >
+            뒤로가기
+          </button>
+          <h1 className="admin-page-title">관리자 페이지</h1>
         </div>
 
-        <Routes>
-          <Route index element={<Navigate to="certificates" replace />} />
-          <Route
-            path="certificates"
-            element={
-              <CertificateList
-                certs={certs}
-                setCerts={setCerts}
-                filter={filter}
-                setFilter={setFilter}
+        <section className="admin-panel">
+          <div className="admin-panel-header">
+            <h2 className="admin-panel-title">인증서 관리</h2>
+            <p className="admin-panel-subtitle">
+              상태별 조회, 검색, 날짜 정렬이 가능합니다.
+            </p>
+          </div>
+
+          <div className="admin-tabs">
+            {STATUS_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                className={`admin-tab-button ${
+                  activeTab === tab.key ? "active" : ""
+                }`}
+                onClick={() => setActiveTab(tab.key)}
+              >
+                {tab.label}
+                <span className="admin-tab-count">
+                  {statusCounts[tab.key] ?? 0}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="admin-filter-bar">
+            <div className="admin-search-box">
+              <input
+                type="text"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                placeholder="이메일, 활동명, 기관명, 파일명 검색"
+                className="admin-search-input"
               />
-            }
-          />
-          <Route
-            path="pending"
-            element={
-              <CertificateList
-                certs={certs}
-                setCerts={setCerts}
-                filter="pending"
-                setFilter={setFilter}
-              />
-            }
-          />
-          <Route
-            path="users"
-            element={
-              <div style={styles.content}>
-                <p style={styles.placeholderText}>회원 관리 준비 중</p>
-              </div>
-            }
-          />
-        </Routes>
-      </main>
+            </div>
+
+            <div className="admin-sort-controls">
+              <select
+                value={sortField}
+                onChange={(e) => setSortField(e.target.value)}
+                className="admin-select"
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="admin-select"
+              >
+                <option value="desc">내림차순</option>
+                <option value="asc">오름차순</option>
+              </select>
+            </div>
+          </div>
+
+          {loading ? (
+            <p className="admin-empty-message">목록을 불러오는 중입니다.</p>
+          ) : filteredCertificates.length === 0 ? (
+            <p className="admin-empty-message">
+              조건에 맞는 인증서가 없습니다.
+            </p>
+          ) : (
+            <div className="admin-certificate-list">
+              {filteredCertificates.map((item) => (
+                <AdminCertificateCard
+                  key={item.id}
+                  item={item}
+                  reviewLoadingId={reviewLoadingId}
+                  onReview={handleReview}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
-};
+}
 
 export default AdminPage;
