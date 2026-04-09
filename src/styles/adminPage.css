@@ -1,10 +1,8 @@
 .admin-page {
   min-height: 100vh;
   padding: 48px 20px 80px;
-  background:
-    radial-gradient(circle at top, rgba(100, 116, 139, 0.08), transparent 35%),
-    linear-gradient(180deg, #eef2f7 0%, #e9eef5 52%, #e3eaf2 100%);
-  color: #1e293b;
+  background-color: #f5f5f5;
+  color: #111827;
   box-sizing: border-box;
 }
 
@@ -24,25 +22,32 @@
 .admin-back-button {
   position: absolute;
   left: 0;
-  padding: 12px 18px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.88);
-  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #374151;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  box-sizing: border-box;
   transition:
     transform 0.2s ease,
+    background-color 0.2s ease,
     border-color 0.2s ease,
-    background 0.2s ease,
+    color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 .admin-back-button:hover {
   transform: translateY(-1px);
-  border-color: rgba(100, 116, 139, 0.35);
-  background: #ffffff;
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
@@ -51,19 +56,16 @@
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #0f172a;
+  color: #111827;
   text-align: center;
 }
 
 .admin-panel {
   padding: 28px;
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 28px;
-  background: rgba(248, 250, 252, 0.86);
-  box-shadow:
-    0 18px 40px rgba(15, 23, 42, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(10px);
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
 }
 
 .admin-panel-header {
@@ -74,13 +76,13 @@
   margin: 0 0 8px;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #111827;
 }
 
 .admin-panel-subtitle {
   margin: 0;
-  color: #64748b;
-  font-size: 0.95rem;
+  color: #6b7280;
+  font-size: 0.9rem;
 }
 
 .admin-tabs {
@@ -93,44 +95,52 @@
 .admin-tab-button {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 18px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.84);
-  color: #475569;
-  font-weight: 600;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   transition:
     border-color 0.2s ease,
     color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .admin-tab-button:hover {
-  border-color: rgba(100, 116, 139, 0.32);
-  color: #1e293b;
-  background: rgba(255, 255, 255, 0.96);
+  transform: translateY(-1px);
+  border-color: #9ca3af;
+  color: #111827;
+  background: #f9fafb;
 }
 
 .admin-tab-button.active {
-  border-color: rgba(71, 85, 105, 0.28);
-  background: linear-gradient(180deg, #f8fafc, #e9eef5);
-  color: #0f172a;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.1);
 }
 
 .admin-tab-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
-  height: 28px;
-  padding: 0 8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.16);
-  font-size: 0.85rem;
+  background: #f3f4f6;
+  font-size: 0.78rem;
+}
+
+.admin-tab-button.active .admin-tab-count {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
 }
 
 .admin-filter-bar {
@@ -149,24 +159,25 @@
 .admin-search-input,
 .admin-select {
   width: 100%;
-  height: 48px;
-  padding: 0 16px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #0f172a;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 14px;
   box-sizing: border-box;
   outline: none;
 }
 
 .admin-search-input::placeholder {
-  color: #94a3b8;
+  color: #9ca3af;
 }
 
 .admin-search-input:focus,
 .admin-select:focus {
-  border-color: rgba(100, 116, 139, 0.38);
-  box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.12);
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 4px rgba(156, 163, 175, 0.14);
 }
 
 .admin-sort-controls {
@@ -187,6 +198,6 @@
 .admin-empty-message {
   margin: 28px 0 10px;
   text-align: center;
-  color: #64748b;
+  color: #6b7280;
   font-weight: 600;
 }
