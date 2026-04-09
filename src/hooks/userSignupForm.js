@@ -88,31 +88,20 @@ export const useSignupForm = () => {
 
   // ── 폼 유효성 검사 ────────────────────────────────────────
   const validate = () => {
-    const {
-      username,
-      nickname,
-      email,
-      password,
-      confirmPassword,
-      district_code,
-    } = form;
+    if (!form.email) return "이메일을 입력해주세요";
+    if (!isEmailVerified) return "이메일 인증을 완료해주세요";
 
-    if (
-      !username ||
-      !nickname ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      !district_code
-    ) {
-      return "모든 값을 입력해주세요";
-    }
-    if (!isEmailVerified) {
-      return "이메일 인증을 완료해주세요";
-    }
-    if (password !== confirmPassword) {
-      return "비밀번호가 다릅니다";
-    }
+    if (!form.username) return "아이디를 입력해주세요";
+    if (!form.nickname) return "닉네임을 입력해주세요";
+
+    if (!form.password) return "비밀번호를 입력해주세요";
+    if (!form.confirmPassword) return "비밀번호 확인을 입력해주세요";
+
+    if (form.password !== form.confirmPassword) return "비밀번호가 다릅니다";
+
+    if (!form.city_code) return "시/도를 선택해주세요";
+    if (!form.district_code) return "시/군/구를 선택해주세요";
+
     return null;
   };
 
@@ -121,8 +110,10 @@ export const useSignupForm = () => {
     e.preventDefault();
 
     const errorMsg = validate();
+
     if (errorMsg) {
       setValidationError(errorMsg);
+      alert(errorMsg);
       return;
     }
 
