@@ -5,8 +5,8 @@ import Layout from "../components/Layout";
 import { useMyPage } from "../hooks/useMypage";
 import "../styles/mypage.css";
 import axios from "axios";
+import { useState } from "react";
 
-<<<<<<< HEAD
 const MyPage = () => {
   const {
     user,
@@ -17,24 +17,8 @@ const MyPage = () => {
     certError,
     fetchCertificates,
   } = useMyPage();
-
-=======
-export const MyPage = () => {
-  const { user, loading: userLoading, error: userError } = useUser(); // ✅ 사용자 정보
-  const [certificates, setCertificates] = useState([]);
-  const [file, setFile] = useState([]);
-
-  const fetchCertificates = () => {
-    certificateApi
-      .getMyCertificates()
-      .then((res) => {
-        console.log("인증서 목록 응답:", res.data);
-        setCertificates(res.data.data || []);
-      })
-      .catch((err) => {
-        console.log("인증서 목록 조회 실패:", err);
-      });
-  };
+  
+  const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -64,12 +48,9 @@ export const MyPage = () => {
       };
     };
 
-  useEffect(() => {
-    fetchCertificates();
-  }, []);
 
   // 사용자 정보 로딩중
->>>>>>> 08cacf1 (feat:마이페이지 파일 업로드 기능 추가)
+
   if (userLoading) {
     return (
       <Layout>
@@ -111,7 +92,6 @@ export const MyPage = () => {
 
         <div>
           <input type="file" onChange={handleFileChange}/>
-
           <button onClick={handleUpload}>업로드</button>
         </div>
       </div>
