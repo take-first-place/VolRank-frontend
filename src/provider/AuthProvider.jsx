@@ -3,6 +3,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { isTokenExpired } from "../utils/auth";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, signupUser, sendCode, verifyEmailCode } from "../api/auth";
+import { getUserById } from "../api/users";
 
 const isAdminRole = (role) => String(role || "").toUpperCase() === "ADMIN";
 
@@ -15,19 +16,42 @@ const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const initializeAuth = async () => {
+      const token = localStorage.getItem("token");
 
-    if (token && !isTokenExpired(token)) {
-      const decoded = jwtDecode(token);
+      if (!token || isTokenExpired(token)) {
+        localStorage.removeItem("token");
+        setLoading(false);
+        return;
+      }
 
-      setUser(decoded);
-      setIsLoggedIn(true);
-      setIsAdmin(isAdminRole(decoded?.role));
-    } else {
-      localStorage.removeItem("token");
-    }
+      try {
+        const decoded = jwtDecode(token);
 
-    setLoading(false);
+        if (!decoded?.id) {
+          localStorage.removeItem("token");
+          setLoading(false);
+          return;
+        }
+
+        const response = await getUserById(decoded.id);
+        const userData = response.data.data;
+
+        setUser(userData);
+        setIsLoggedIn(true);
+        setIsAdmin(isAdminRole(userData?.role || decoded?.role));
+      } catch (err) {
+        console.error("초기 사용자 정보 조회 실패:", err);
+        localStorage.removeItem("token");
+        setUser(null);
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const clearError = useCallback(() => setError(null), []);

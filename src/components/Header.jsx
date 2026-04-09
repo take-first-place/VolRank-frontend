@@ -4,6 +4,9 @@ import { useAuth } from "../hooks/useAuth";
 const Header = () => {
   const { isLoggedIn, isAdmin, user, logout } = useAuth();
 
+  const displayName =
+    user?.nickname || user?.username || user?.name || user?.email || "";
+
   const getNavLinkClass = ({ isActive }) =>
     isActive ? "nav-link active" : "nav-link";
 
@@ -34,7 +37,9 @@ const Header = () => {
         <div className="auth-menu">
           {isLoggedIn ? (
             <>
-              <span className="auth-user">{user?.nickname}님</span>
+              <span className="auth-user">
+                {displayName ? `${displayName}님` : "회원님"}
+              </span>
               <NavLink to="/mypage" className={getNavLinkClass}>
                 마이페이지
               </NavLink>
