@@ -5,6 +5,7 @@ const Header = () => {
   const { isLoggedIn, user, logout } = useAuth(); 
 
   console.log("Header isLoggedIn:", isLoggedIn);
+  console.log(user);
 
   return (
     <header className="header">
