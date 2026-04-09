@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { getVolunteers } from "../api/volunteer";
 import "../styles/volunteerPage.css";
 
 function VolunteerPage({ isLoggedIn }) {
+  const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [region, setRegion] = useState("");
   const [category, setCategory] = useState("");
@@ -131,7 +133,7 @@ function VolunteerPage({ isLoggedIn }) {
         ) : volunteers.length > 0 ? (
           <div className="volunteer-card-list">
             {volunteers.map((item) => (
-              <div key={item.id} className="volunteer-card">
+              <div key={item.id} className="volunteer-card" onClick={() => navigate(`/volunteers/${item.id}`)}>
 
                 <h3 className="volunteer-card-title">
                   {item.title || "-"}
