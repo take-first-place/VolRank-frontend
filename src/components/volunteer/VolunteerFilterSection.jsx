@@ -1,17 +1,35 @@
-import {
-  categoryOptions,
-  regionOptions,
-} from "../../constants/volunteerOptions";
+const categoryOptions = [
+  { label: "생활편의지원", value: "생활편의지원" },
+  { label: "주거환경", value: "주거환경" },
+  { label: "교육", value: "교육" },
+  { label: "상담", value: "상담" },
+  { label: "보건의료", value: "보건의료" },
+  { label: "농어촌봉사", value: "농어촌봉사" },
+  { label: "문화행사", value: "문화행사" },
+  { label: "환경보호", value: "환경보호" },
+];
+
+const statusOptions = [
+  { label: "전체", value: "" },
+  { label: "모집중", value: "RECRUITING" },
+  { label: "종료", value: "ENDED" },
+];
 
 const VolunteerFilterSection = ({
   keyword,
   setKeyword,
-  region,
+  selectedSido,
+  selectedSigungu,
   category,
+  status,
+  sidoOptions,
+  sigunguOptions,
   onSearch,
   onReset,
-  onRegionClick,
+  onSidoChange,
+  onSigunguChange,
   onCategoryClick,
+  onStatusClick,
 }) => {
   return (
     <div className="volunteer-search-panel">
@@ -46,17 +64,40 @@ const VolunteerFilterSection = ({
       <div className="volunteer-filter-grid">
         <div>
           <p className="volunteer-filter-label">지역</p>
-          <div className="volunteer-chip-list">
-            {regionOptions.map((item) => (
-              <button
-                key={item.value || "all-region"}
-                type="button"
-                className={`volunteer-chip ${region === item.value ? "active" : ""}`}
-                onClick={() => onRegionClick(item.value)}
-              >
-                {item.label}
-              </button>
-            ))}
+
+          <div className="volunteer-select-row">
+            <select
+              className="volunteer-filter-select"
+              value={selectedSido}
+              onChange={(e) => onSidoChange(e.target.value)}
+            >
+              <option value="">전체</option>
+              {sidoOptions.map((item, index) => (
+                <option
+                  key={`${item.region_code}-${index}`}
+                  value={item.region_code}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="volunteer-filter-select"
+              value={selectedSigungu}
+              onChange={(e) => onSigunguChange(e.target.value)}
+              disabled={!selectedSido}
+            >
+              <option value="">전체</option>
+              {sigunguOptions.map((item, index) => (
+                <option
+                  key={`${item.region_code}-${index}`}
+                  value={item.region_code}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -65,10 +106,26 @@ const VolunteerFilterSection = ({
           <div className="volunteer-chip-list">
             {categoryOptions.map((item) => (
               <button
-                key={item.value || "all-category"}
+                key={item.value}
                 type="button"
                 className={`volunteer-chip ${category === item.value ? "active" : ""}`}
                 onClick={() => onCategoryClick(item.value)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className="volunteer-filter-label">모집 상태</p>
+          <div className="volunteer-chip-list">
+            {statusOptions.map((item) => (
+              <button
+                key={item.value || "all-status"}
+                type="button"
+                className={`volunteer-chip ${status === item.value ? "active" : ""}`}
+                onClick={() => onStatusClick(item.value)}
               >
                 {item.label}
               </button>

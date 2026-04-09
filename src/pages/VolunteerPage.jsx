@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { getVolunteers } from "../api/volunteer";
+import { getSidos, getSigungus } from "../api/region";
 import VolunteerFilterSection from "../components/volunteer/VolunteerFilterSection";
 import VolunteerCardList from "../components/volunteer/VolunteerCardList";
 import VolunteerPagination from "../components/volunteer/VolunteerPagination";
 import {
   getSavedListState,
   saveListState,
-  VOLUNTEER_LIST_STATE_KEY,
   VOLUNTEER_SCROLL_KEY,
 } from "../utils/volunteerFormat";
 import "../styles/volunteerPage.css";
@@ -19,10 +19,19 @@ function VolunteerPage({ isLoggedIn }) {
   const savedState = getSavedListState();
 
   const [keyword, setKeyword] = useState(savedState?.keyword || "");
-  const [region, setRegion] = useState(savedState?.region || "");
+  const [selectedSido, setSelectedSido] = useState(
+    savedState?.selectedSido || "",
+  );
+  const [selectedSigungu, setSelectedSigungu] = useState(
+    savedState?.selectedSigungu || "",
+  );
   const [category, setCategory] = useState(savedState?.category || "");
+  const [status, setStatus] = useState(savedState?.status || "");
   const [page, setPage] = useState(savedState?.page || 1);
   const [size] = useState(10);
+
+  const [sidoOptions, setSidoOptions] = useState([]);
+  const [sigunguOptions, setSigunguOptions] = useState([]);
 
   const [volunteers, setVolunteers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,37 +42,87 @@ function VolunteerPage({ isLoggedIn }) {
   const firstLoadRef = useRef(true);
   const pendingScrollModeRef = useRef(null);
 
+  const normalizeRegionItems = (items) => {
+    if (!Array.isArray(items)) return [];
+
+    return items.filter(
+      (item) =>
+        item &&
+        item.region_code &&
+        item.name &&
+        item.name !== "기본" &&
+        item.name !== "00" &&
+        item.name.trim() !== "",
+    );
+  };
+
   const persistCurrentState = ({
     nextKeyword = keyword,
-    nextRegion = region,
+    nextSelectedSido = selectedSido,
+    nextSelectedSigungu = selectedSigungu,
     nextCategory = category,
+    nextStatus = status,
     nextPage = page,
   } = {}) => {
     saveListState({
       keyword: nextKeyword,
-      region: nextRegion,
+      selectedSido: nextSelectedSido,
+      selectedSigungu: nextSelectedSigungu,
       category: nextCategory,
+      status: nextStatus,
       page: nextPage,
     });
+  };
+
+  const fetchSidoOptions = async () => {
+    try {
+      const res = await getSidos();
+      const items = normalizeRegionItems(res.data?.data);
+      setSidoOptions(items);
+    } catch (err) {
+      console.error("시도 목록 조회 실패:", err);
+      setSidoOptions([]);
+    }
+  };
+
+  const fetchSigunguOptions = async (sidoCode) => {
+    if (!sidoCode) {
+      setSigunguOptions([]);
+      return;
+    }
+
+    try {
+      const res = await getSigungus(sidoCode);
+      const items = normalizeRegionItems(res.data?.data);
+      setSigunguOptions(items);
+    } catch (err) {
+      console.error("시군구 목록 조회 실패:", err);
+      setSigunguOptions([]);
+    }
   };
 
   const fetchVolunteers = async ({
     nextPage = page,
     nextKeyword = keyword,
-    nextRegion = region,
+    nextSelectedSido = selectedSido,
+    nextSelectedSigungu = selectedSigungu,
     nextCategory = category,
+    nextStatus = status,
     scrollMode = null,
   } = {}) => {
     try {
       setLoading(true);
       pendingScrollModeRef.current = scrollMode;
 
+      const regionCode = nextSelectedSigungu || nextSelectedSido || "";
+
       const res = await getVolunteers({
         page: nextPage,
         size,
         keyword: nextKeyword,
-        region_code: nextRegion,
+        region_code: regionCode,
         volunteer_type: nextCategory,
+        status: nextStatus,
       });
 
       const payload = res.data?.data || {};
@@ -75,8 +134,10 @@ function VolunteerPage({ isLoggedIn }) {
 
       persistCurrentState({
         nextKeyword,
-        nextRegion,
+        nextSelectedSido,
+        nextSelectedSigungu,
         nextCategory,
+        nextStatus,
         nextPage,
       });
     } catch (err) {
@@ -90,6 +151,10 @@ function VolunteerPage({ isLoggedIn }) {
   };
 
   useEffect(() => {
+    fetchSidoOptions();
+  }, []);
+
+  useEffect(() => {
     const shouldRestoreFromDetail = location.state?.restoreScroll;
     const restoredScroll = sessionStorage.getItem(VOLUNTEER_SCROLL_KEY);
 
@@ -99,11 +164,17 @@ function VolunteerPage({ isLoggedIn }) {
       fetchVolunteers({
         nextPage: savedState?.page || 1,
         nextKeyword: savedState?.keyword || "",
-        nextRegion: savedState?.region || "",
+        nextSelectedSido: savedState?.selectedSido || "",
+        nextSelectedSigungu: savedState?.selectedSigungu || "",
         nextCategory: savedState?.category || "",
+        nextStatus: savedState?.status || "",
         scrollMode:
           shouldRestoreFromDetail && restoredScroll ? "restore-detail" : null,
       });
+
+      if (savedState?.selectedSido) {
+        fetchSigunguOptions(savedState.selectedSido);
+      }
     }
   }, []);
 
@@ -153,38 +224,44 @@ function VolunteerPage({ isLoggedIn }) {
     fetchVolunteers({
       nextPage: 1,
       nextKeyword: keyword,
-      nextRegion: region,
+      nextSelectedSido: selectedSido,
+      nextSelectedSigungu: selectedSigungu,
       nextCategory: category,
+      nextStatus: status,
       scrollMode: "results-top",
     });
   };
 
   const handleReset = () => {
     setKeyword("");
-    setRegion("");
+    setSelectedSido("");
+    setSelectedSigungu("");
     setCategory("");
+    setStatus("");
+    setSigunguOptions([]);
     setPage(1);
 
     fetchVolunteers({
       nextPage: 1,
       nextKeyword: "",
-      nextRegion: "",
+      nextSelectedSido: "",
+      nextSelectedSigungu: "",
       nextCategory: "",
+      nextStatus: "",
       scrollMode: "results-top",
     });
   };
 
-  const handleRegionClick = (value) => {
-    setRegion(value);
+  const handleSidoChange = async (value) => {
+    setSelectedSido(value);
+    setSelectedSigungu("");
     setPage(1);
+    await fetchSigunguOptions(value);
+  };
 
-    fetchVolunteers({
-      nextPage: 1,
-      nextKeyword: keyword,
-      nextRegion: value,
-      nextCategory: category,
-      scrollMode: "results-top",
-    });
+  const handleSigunguChange = (value) => {
+    setSelectedSigungu(value);
+    setPage(1);
   };
 
   const handleCategoryClick = (value) => {
@@ -194,8 +271,25 @@ function VolunteerPage({ isLoggedIn }) {
     fetchVolunteers({
       nextPage: 1,
       nextKeyword: keyword,
-      nextRegion: region,
+      nextSelectedSido: selectedSido,
+      nextSelectedSigungu: selectedSigungu,
       nextCategory: value,
+      nextStatus: status,
+      scrollMode: "results-top",
+    });
+  };
+
+  const handleStatusClick = (value) => {
+    setStatus(value);
+    setPage(1);
+
+    fetchVolunteers({
+      nextPage: 1,
+      nextKeyword: keyword,
+      nextSelectedSido: selectedSido,
+      nextSelectedSigungu: selectedSigungu,
+      nextCategory: category,
+      nextStatus: value,
       scrollMode: "results-top",
     });
   };
@@ -208,8 +302,10 @@ function VolunteerPage({ isLoggedIn }) {
     fetchVolunteers({
       nextPage,
       nextKeyword: keyword,
-      nextRegion: region,
+      nextSelectedSido: selectedSido,
+      nextSelectedSigungu: selectedSigungu,
       nextCategory: category,
+      nextStatus: status,
       scrollMode: "results-top",
     });
   };
@@ -238,12 +334,18 @@ function VolunteerPage({ isLoggedIn }) {
         <VolunteerFilterSection
           keyword={keyword}
           setKeyword={setKeyword}
-          region={region}
+          selectedSido={selectedSido}
+          selectedSigungu={selectedSigungu}
           category={category}
+          status={status}
+          sidoOptions={sidoOptions}
+          sigunguOptions={sigunguOptions}
           onSearch={handleSearch}
           onReset={handleReset}
-          onRegionClick={handleRegionClick}
+          onSidoChange={handleSidoChange}
+          onSigunguChange={handleSigunguChange}
           onCategoryClick={handleCategoryClick}
+          onStatusClick={handleStatusClick}
         />
 
         <div ref={resultsRef} className="volunteer-results-anchor" />

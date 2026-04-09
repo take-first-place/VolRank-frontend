@@ -13,27 +13,29 @@ const VolunteerPagination = ({ page, totalPages, onPageChange }) => {
     <div className="volunteer-pagination">
       <button
         type="button"
-        className="volunteer-page-button nav"
+        className="volunteer-page-button volunteer-page-nav-button"
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
       >
         이전
       </button>
 
-      {pages.map((pageNumber) => (
-        <button
-          key={pageNumber}
-          type="button"
-          className={`volunteer-page-button ${page === pageNumber ? "active" : ""}`}
-          onClick={() => onPageChange(pageNumber)}
-        >
-          {pageNumber}
-        </button>
-      ))}
+      <div className="volunteer-page-number-group">
+        {pages.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            className={`volunteer-page-button ${page === pageNumber ? "active" : ""}`}
+            onClick={() => onPageChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
 
       <button
         type="button"
-        className="volunteer-page-button nav"
+        className="volunteer-page-button volunteer-page-nav-button"
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
       >
