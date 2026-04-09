@@ -1,5 +1,6 @@
 import {
   getHoursValue,
+  getIsMeValue,
   getNicknameValue,
   getRankClassName,
   getRankIcon,
@@ -26,10 +27,11 @@ function RankingDetailSection({ top100, tab, shouldShowRegion, onClickBack }) {
             const rankClassName = getRankClassName(item);
             const rankIcon = getRankIcon(displayRank);
             const regionName = getRegionNameValue(item, tab);
+            const isMe = getIsMeValue(item);
 
             return (
               <div
-                className={`ranking-item ${rankClassName}`}
+                className={`ranking-item ${rankClassName}${isMe ? " ranking-item-me" : ""}`}
                 key={`top100-${item.user_id ?? item.nickname ?? "unknown"}-${displayRank}-${index}`}
               >
                 <div className="ranking-item-left">
@@ -43,6 +45,7 @@ function RankingDetailSection({ top100, tab, shouldShowRegion, onClickBack }) {
                   <div>
                     <p className="ranking-item-name">
                       {getNicknameValue(item)}
+                      {isMe && <span className="ranking-me-badge">MY</span>}
                     </p>
 
                     {shouldShowRegion && regionName && (
