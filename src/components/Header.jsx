@@ -1,8 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
   const { isLoggedIn, isAdmin, user, logout } = useAuth();
+
+  const getNavLinkClass = ({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link";
 
   return (
     <header className="header">
@@ -12,38 +15,38 @@ const Header = () => {
         </Link>
 
         <nav className="nav">
-          <Link to="/" className="nav-link">
+          <NavLink to="/" className={getNavLinkClass} end>
             홈
-          </Link>
-          <Link to="/volunteers" className="nav-link">
+          </NavLink>
+          <NavLink to="/volunteers" className={getNavLinkClass}>
             봉사활동
-          </Link>
-          <Link to="/ranking" className="nav-link">
+          </NavLink>
+          <NavLink to="/ranking" className={getNavLinkClass}>
             랭킹
-          </Link>
+          </NavLink>
           {isAdmin && (
-            <Link to="/admin" className="nav-link">
+            <NavLink to="/admin" className={getNavLinkClass}>
               관리자 페이지
-            </Link>
+            </NavLink>
           )}
         </nav>
 
         <div className="auth-menu">
           {isLoggedIn ? (
             <>
-              <span>{user?.nickname}님</span>
-              <Link to="/mypage" className="nav-link">
+              <span className="auth-user">{user?.nickname}님</span>
+              <NavLink to="/mypage" className={getNavLinkClass}>
                 마이페이지
-              </Link>
+              </NavLink>
               <button onClick={logout} className="logout-btn">
                 로그아웃
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link">
+              <NavLink to="/login" className={getNavLinkClass}>
                 로그인
-              </Link>
+              </NavLink>
               <Link to="/signup" className="signup-btn">
                 회원가입
               </Link>
