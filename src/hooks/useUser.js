@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getUserById } from "../api/users"; // ✅ getUserById 사용
-import { decodeToken } from "../utils/auth";
+import { jwtDecode } from "jwt-decode";
 
 export const useUser = () => {
   const [user, setUser] = useState(null);
@@ -16,7 +16,7 @@ export const useUser = () => {
       return;
     }
 
-    const decoded = decodeToken(token);
+    const decoded = jwtDecode(token);
     console.log("decoded token:", decoded);
 
     if (!decoded?.id) {

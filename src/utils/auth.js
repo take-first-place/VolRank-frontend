@@ -1,15 +1,7 @@
-// utils/auth.js
-export const decodeToken = (token) => {
-    try {
-        const payload = token.split(".")[1];
-        return JSON.parse(atob(payload));
-    } catch {
-        return null;
-    }
-};
+import { jwtDecode } from "jwt-decode";
 
 export const isTokenExpired = (token) => {
-    const decoded = decodeToken(token);
+    const decoded = jwtDecode(token);
 
     if (!decoded?.exp) {
         return true
