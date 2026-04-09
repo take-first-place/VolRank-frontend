@@ -32,13 +32,20 @@ const VolunteerDetail = () => {
         <button onClick={() => navigate(-1)}>뒤로가기</button>
       
       <header style={{ borderBottom: '2px solid #eee', marginBottom: '20px' }}>
-        <h1 style={{ color: '#333' }}>{data.title}</h1>
+        <h1 style={{ 
+          color: '#333',
+          lineHeight: '1.4',
+          fontSize: '24px',
+          marginBottom: '10px',
+          wordBreak: 'keep-all',
+          overflowWrap: 'break-word'
+        }}>{data.title}</h1>
         <p style={{ color: '#666' }}>{data.organization_name} | {data.region_name}</p>
       </header>
 
       <section className="info-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-        <div><strong>봉사기간:</strong> {data.start_date} ~ {data.end_date}</div>
-        <div><strong>모집기간:</strong> {data.recruit_start_at} ~ {data.recruit_end_at}</div>
+        <div><strong>봉사기간:</strong> {formatDate(data.start_date)} ~ {formatDate(data.end_date)}</div>
+        <div><strong>모집기간:</strong> {formatDate(data.recruit_start_at)} ~ {formatDate(data.recruit_end_at)}</div>
         <div><strong>봉사장소:</strong> {data.place}</div>
         <div><strong>모집인원:</strong> {data.recruit_count}명</div>
         <div><strong>봉사분야:</strong> {data.volunteer_type}</div>
@@ -85,5 +92,10 @@ const VolunteerDetail = () => {
     </div>
   )
 };
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  return dateStr.split("T")[0];
+}
 
 export default VolunteerDetail;
