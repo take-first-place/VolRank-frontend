@@ -5,7 +5,7 @@ import Signup from "./pages/Signup";
 import UserLoginPage from "./pages/UserLoginPage";
 import RankingPage from "./pages/RankingPage";
 import MyPage from "./pages/MyPage";
-import AdminPage from "./pages/AdminPage";
+import AdminPage from "./pages/adminpage";
 import VolunteerPage from "./pages/VolunteerPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
