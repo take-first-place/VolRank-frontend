@@ -8,6 +8,7 @@ import {
   sortCertificates,
 } from "../utils/adminCertificateUtils";
 import "../styles/adminPage.css";
+import "../styles/adminPageResponsive.css";
 
 const STATUS_TABS = [
   { key: "ALL", label: "전체" },

@@ -5,6 +5,7 @@ import {
   getStatusClassName,
   getStatusLabel,
 } from "../../utils/adminCertificateUtils";
+import "../../styles/adminCertificateCard.css";
 
 const AdminCertificateCard = ({ item, reviewLoadingId, onReview }) => {
   return (
