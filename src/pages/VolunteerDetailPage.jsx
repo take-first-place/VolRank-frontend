@@ -71,6 +71,13 @@ const VolunteerDetail = () => {
           borderRadius: '5px',
           cursor: 'pointer',
           fontSize: '16px'
+        }}
+        onClick={() => {
+          if (data?.external_url) {
+            window.open(data.external_url, "_blank", "noopener,noreferrer");
+          } else {
+            alert("신청 가능한 외부 페이지가 없습니다.");
+          }
         }}>
           신청하기
         </button>
