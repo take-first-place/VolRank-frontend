@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { isTokenExpired } from "../utils/auth";
 import { jwtDecode } from "jwt-decode";
-import { loginUser, signupUser, sendCode, verifyEmailCode } from "../api/auth";
+import { 
+  loginUser, 
+  signupUser, 
+  sendCode, 
+  verifyEmailCode 
+} from "../api/auth";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -131,14 +136,14 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("token");
     setUser(null);
     setIsLoggedIn(false);
     setIsAdmin(false);
   }, []);
 
   const getToken = useCallback(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
     if (!token || isTokenExpired(token)) {
       logout();
       return null;
