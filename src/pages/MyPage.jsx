@@ -4,7 +4,9 @@ import UserInfoSection from "../components/UserInfoSection";
 import Layout from "../components/Layout";
 import { useMyPage } from "../hooks/useMypage";
 import "../styles/mypage.css";
+import axios from "axios";
 
+<<<<<<< HEAD
 const MyPage = () => {
   const {
     user,
@@ -16,6 +18,58 @@ const MyPage = () => {
     fetchCertificates,
   } = useMyPage();
 
+=======
+export const MyPage = () => {
+  const { user, loading: userLoading, error: userError } = useUser(); // ✅ 사용자 정보
+  const [certificates, setCertificates] = useState([]);
+  const [file, setFile] = useState([]);
+
+  const fetchCertificates = () => {
+    certificateApi
+      .getMyCertificates()
+      .then((res) => {
+        console.log("인증서 목록 응답:", res.data);
+        setCertificates(res.data.data || []);
+      })
+      .catch((err) => {
+        console.log("인증서 목록 조회 실패:", err);
+      });
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = async() => {
+    if(!file){
+      alert("파일을 선택하세요");
+      return;
+    };
+  
+
+    const formData = new FormData();
+    formData.append("file", file); 
+  
+
+  try{
+    await axios.post("http://localhost:8080/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+    alert("업로드 성공");
+    }catch(err){
+   console.error(err);
+    alert("업로드 실패")
+      };
+    };
+
+  useEffect(() => {
+    fetchCertificates();
+  }, []);
+
+  // 사용자 정보 로딩중
+>>>>>>> 08cacf1 (feat:마이페이지 파일 업로드 기능 추가)
   if (userLoading) {
     return (
       <Layout>
@@ -54,9 +108,16 @@ const MyPage = () => {
             <CertificateUploadSection fetchCertificates={fetchCertificates} />
           </div>
         </div>
+
+        <div>
+          <input type="file" onChange={handleFileChange}/>
+
+          <button onClick={handleUpload}>업로드</button>
+        </div>
       </div>
     </Layout>
   );
 };
+
 
 export default MyPage;
