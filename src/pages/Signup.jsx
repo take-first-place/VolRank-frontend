@@ -1,108 +1,33 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
-import { useAuth } from "../hooks/useAuth";
+import RegionSelect from "../components/RegionSelect";
+import { useSignupForm } from "../hooks/userSignupForm";
 import "../styles/signup.css";
 
-export const Signup = () => {
-  const navigate = useNavigate();
-
+/**
+ * 회원가입 페이지
+ *
+ * 관심사 분리:
+ *   - 폼 상태 / 유효성 검사 / API 호출  →  useSignupForm (hooks/useSignupForm.js)
+ *   - 지역 데이터 (코드 + 이름 매핑)    →  regionData    (constants/regionData.js)
+ *   - 지역 선택 UI                      →  RegionSelect  (components/RegionSelect.jsx)
+ *   - 페이지 렌더링 (이 파일)           →  Signup
+ */
+const Signup = () => {
   const {
-    signup,
-    sendVerificationCode,
-    verifiedEmailCode,
+    form,
+    verificationCode,
+    isEmailVerified,
+    isCodeSent,
+    districtOptions,
+    displayError,
     isLoading,
-    error,
-    clearError,
-  } = useAuth();
-
-  const [form, setForm] = useState({
-    username: "",
-    nickname: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    region_code: "",
-  });
-
-  const [verificationCode, setVerificationCode] = useState("");
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [validationError, setValidationError] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-
-    if (validationError) setValidationError("");
-    if (error) clearError();
-  };
-
-  // 인증번호 전송
-  const handleSendCode = async () => {
-    if (!form.email) {
-      setValidationError("이메일을 입력해주세요");
-      return;
-    }
-
-    const result = await sendVerificationCode(form.email);
-    if (result.success) {
-      setIsCodeSent(true);
-      alert("인증번호가 전송되었습니다.");
-    }
-  };
-
-  // 인증번호 확인
-  const handleVerifyCode = async () => {
-    if (!verificationCode) {
-      setValidationError("인증번호를 입력해주세요");
-      return;
-    }
-
-    const result = await verifiedEmailCode(form.email, verificationCode);
-    if (result.success) {
-      setIsEmailVerified(true);
-      alert("이메일 인증이 완료되었습니다.");
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // 검증
-    if (
-      !form.username ||
-      !form.nickname ||
-      !form.email ||
-      !form.password ||
-      !form.confirmPassword ||
-      !form.region_code
-    ) {
-      setValidationError("모든 값을 입력해주세요");
-      return;
-    }
-
-    if (form.password !== form.confirmPassword) {
-      setValidationError("비밀번호가 다릅니다");
-      return;
-    }
-
-    // API 호출
-    const result = await signup({
-      username: form.username,
-      nickname: form.nickname,
-      email: form.email,
-      password: form.password,
-      region_code: form.region_code,
-    });
-
-    if (result.success) {
-      alert("회원가입이 완료되었습니다!");
-      navigate("/login");
-    }
-  };
-
-  const displayError = validationError || error;
+    navigate,
+    handleChange,
+    handleVerificationCodeChange,
+    handleSendCode,
+    handleVerifyCode,
+    handleSubmit,
+  } = useSignupForm();
 
   return (
     <Layout>
@@ -115,7 +40,7 @@ export const Signup = () => {
             {displayError && <div className="signup-error">{displayError}</div>}
 
             <form onSubmit={handleSubmit} className="signup-form">
-              {/* 이메일 + 인증 */}
+              {/* 이메일 + 인증번호 전송 버튼 */}
               <div className="signup-group">
                 <label>이메일</label>
                 <div style={{ display: "flex", gap: "8px" }}>
@@ -139,7 +64,7 @@ export const Signup = () => {
                 </div>
               </div>
 
-              {/* 인증번호 입력 */}
+              {/* 인증번호 입력 (코드 전송 후 & 인증 완료 전) */}
               {isCodeSent && !isEmailVerified && (
                 <div className="signup-group">
                   <label>인증번호</label>
@@ -148,7 +73,7 @@ export const Signup = () => {
                       type="text"
                       placeholder="인증번호 6자리"
                       value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
+                      onChange={handleVerificationCodeChange}
                       disabled={isLoading}
                       style={{ flex: 1 }}
                     />
@@ -164,6 +89,7 @@ export const Signup = () => {
                 </div>
               )}
 
+              {/* 인증 완료 메시지 */}
               {isEmailVerified && (
                 <div
                   style={{
@@ -176,7 +102,7 @@ export const Signup = () => {
                 </div>
               )}
 
-              {/* 나머지 필드들 */}
+              {/* 아이디 */}
               <div className="signup-group">
                 <label>아이디</label>
                 <input
@@ -189,6 +115,7 @@ export const Signup = () => {
                 />
               </div>
 
+              {/* 비밀번호 */}
               <div className="signup-group">
                 <label>비밀번호</label>
                 <input
@@ -201,6 +128,7 @@ export const Signup = () => {
                 />
               </div>
 
+              {/* 비밀번호 확인 */}
               <div className="signup-group">
                 <label>비밀번호 확인</label>
                 <input
@@ -213,6 +141,7 @@ export const Signup = () => {
                 />
               </div>
 
+              {/* 닉네임 */}
               <div className="signup-group">
                 <label>닉네임</label>
                 <input
@@ -225,34 +154,14 @@ export const Signup = () => {
                 />
               </div>
 
-              <div className="signup-group">
-                <label>지역</label>
-                <select
-                  name="region_code"
-                  value={form.region_code}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                >
-                  <option value="">지역 선택</option>
-                  <option value="11">서울</option>
-                  <option value="26">부산</option>
-                  <option value="27">대구</option>
-                  <option value="28">인천</option>
-                  <option value="29">광주</option>
-                  <option value="30">대전</option>  
-                  <option value="31">울산</option>
-                  <option value="36">세종</option>
-                  <option value="41">경기</option>
-                  <option value="42">강원</option>
-                  <option value="43">충북</option>
-                  <option value="44">충남</option>
-                  <option value="45">전북</option>
-                  <option value="46">전남</option>
-                  <option value="47">경북</option>
-                  <option value="48">경남</option>
-                  <option value="50">제주</option>
-                </select>
-              </div>
+              {/* 지역 선택 (시도 + 시군구 2단계) */}
+              <RegionSelect
+                cityCode={form.city_code}
+                districtCode={form.district_code}
+                districtOptions={districtOptions}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
 
               <button
                 type="submit"
@@ -263,7 +172,7 @@ export const Signup = () => {
               </button>
             </form>
 
-            <div className="signup-divider"></div>
+            <div className="signup-divider" />
 
             <p className="signup-login-text">
               이미 계정이 있으신가요?{" "}
