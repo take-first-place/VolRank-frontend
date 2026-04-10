@@ -26,7 +26,7 @@
   background: #fff;
   padding: 50px 40px;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .login-group {
@@ -48,6 +48,8 @@
   background: #eee;
   padding: 0 14px;
   font-size: 14px;
+  color: #111;
+  -webkit-text-fill-color: #111;
 }
 
 .login-button {
