@@ -56,6 +56,8 @@
   padding: 0 14px;
   font-size: 14px;
   color: #111;
+  -webkit-text-fill-color: #111;
+  color-scheme: light;
   outline: none;
   box-sizing: border-box;
 }
@@ -71,6 +73,18 @@
   font-weight: 700;
   margin-top: 10px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.signup-button:hover {
+  background: #2563eb;
+  color: #fff;
 }
 
 .signup-divider {
@@ -79,12 +93,22 @@
 }
 
 .signup-login-text {
+  margin: 0;
   font-size: 14px;
   color: #555;
+  text-align: center;
+  line-height: 1.6;
 }
 
 .signup-login-text span {
+  display: inline-block;
   font-weight: 700;
   color: #111;
   cursor: pointer;
+  vertical-align: middle;
+  transition: color 0.2s ease;
+}
+
+.signup-login-text span:hover {
+  color: #2563eb;
 }

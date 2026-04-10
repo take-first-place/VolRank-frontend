@@ -373,6 +373,9 @@
     color 0.2s ease,
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .volunteer-page-button:hover:not(:disabled) {
@@ -548,6 +551,9 @@
     transform 0.2s ease,
     background-color 0.2s ease,
     box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .volunteer-apply-button:hover {
