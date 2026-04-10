@@ -3,29 +3,28 @@ import apiClient from "./axios";
 export const certificateApi = {
   /**
    * 내 인증서 목록 조회
-   * GET /certificates/my
+   * GET /api/certificates/my
    */
   getMyCertificates: async () => {
-    const response = await apiClient.get("/certificates/my");
+    const response = await apiClient.get("/api/certificates/my");
     return response.data;
   },
 
   /**
    * 인증서 상세 조회
-   * GET /certificates/:id
+   * GET /api/certificates/:id
    */
   getCertificateById: async (id) => {
-    const response = await apiClient.get(`/certificates/${id}`);
+    const response = await apiClient.get(`/api/certificates/${id}`);
     return response.data;
   },
 
   /**
    * 인증서 등록
-   * POST /certificates
-   * @param {FormData} formData - volunteerParticipationId, certificate 파일
+   * POST /api/certificates
    */
   createCertificate: async (formData) => {
-    const response = await apiClient.post("/certificates", formData, {
+    const response = await apiClient.post("/api/certificates", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -35,21 +34,22 @@ export const certificateApi = {
 
   /**
    * 인증서 검토 (승인/반려)
-   * GET /certificates/:id/review
-   * @param {string} id - 인증서 ID
-   * @param {Object} data - { status: 'approved'|'rejected', rejectedReason?: string }
+   * PATCH /api/certificates/:id/review
    */
   reviewCertificate: async (id, data) => {
-    const response = await apiClient.get(`/certificates/${id}/review`, data);
+    const response = await apiClient.patch(
+      `/api/certificates/${id}/review`,
+      data,
+    );
     return response.data;
   },
 
   /**
    * 전체 인증서 조회 (관리자용)
-   * GET /certificates
+   * GET /api/certificates
    */
   getAllCertificates: async (params = {}) => {
-    const response = await apiClient.get("/certificates", { params });
+    const response = await apiClient.get("/api/certificates", { params });
     return response.data;
   },
 };

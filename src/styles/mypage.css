@@ -1,241 +1,483 @@
-
-
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
-
-.mypage {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 48px 20px 80px;
-  background-color: #f5f5f5;
-  color: #111827;
-  box-sizing: border-box;
+.mypage-page {
   min-height: 100vh;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  word-break: keep-all;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: #f4f7fb;
+  padding: 32px 20px 40px;
+  box-sizing: border-box;
 }
 
-/* ── 상단 바 ── */
-.mypage-topbar {
-  position: relative;
+.mypage-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mypage-header-card,
+.mypage-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.mypage-header-card {
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.mypage-back-button-wrap {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 28px;
+  justify-content: flex-start;
+  margin-bottom: 18px;
 }
 
 .mypage-back-button {
-  position: absolute;
-  left: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  padding: 0 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
+  border: 1px solid #cbd5e1;
   background: #ffffff;
-  color: #374151;
+  color: #334155;
+  border-radius: 12px;
+  padding: 10px 16px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  box-sizing: border-box;
   transition:
-    transform 0.2s ease,
     background-color 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.2s ease;
 }
 
 .mypage-back-button:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #2563eb;
   transform: translateY(-1px);
-  background: #f9fafb;
-  border-color: #9ca3af;
-  color: #111827;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
-/* ── 제목 / 서브타이틀 ── */
+.mypage-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
 .mypage-title {
   margin: 0;
-  font-size: 2rem;
+  font-size: 30px;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #111827;
-  text-align: center;
+  color: #0f172a;
 }
 
 .mypage-subtitle {
-  text-align: center;
-  color: #6b7280;
-  font-size: 0.9rem;
-  margin: 6px 0 36px;
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #64748b;
 }
 
-/* ── 섹션 ── */
-.mypage-section {
-  margin-bottom: 28px;
+.mypage-user-card {
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f6fd 100%);
+  border: 1px solid #dbeafe;
+  border-radius: 20px;
+  padding: 22px;
 }
 
-.mypage-section-label {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.mypage-user-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
-/* ── 패널 (카드) ── */
-.mypage-box {
-  padding: 24px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
-}
-
-.mypage-box-title {
-  margin: 0 0 6px;
-  font-size: 1.1rem;
+.mypage-user-name {
+  margin: 0;
+  font-size: 24px;
   font-weight: 800;
-  color: #111827;
+  color: #0f172a;
 }
 
-.mypage-box-subtitle {
-  margin: 0 0 18px;
-  color: #6b7280;
-  font-size: 0.88rem;
-}
-
-/* ── 정보 그리드 ── */
-.mypage-info-grid {
+.mypage-user-info-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.mypage-user-info-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mypage-user-info-grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mypage-info-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+
+.mypage-info-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.mypage-info-value {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  word-break: break-word;
+}
+
+.mypage-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.mypage-card {
+  padding: 24px;
+  min-height: 0;
+}
+
+.mypage-card-header {
+  margin-bottom: 20px;
+}
+
+.mypage-card-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.mypage-card-header p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+.mypage-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+}
+
+.mypage-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mypage-form-group-full {
+  grid-column: 1 / -1;
+}
+
+.mypage-form-group label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.mypage-form-group input {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 0 14px;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.mypage-form-group input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+}
+
+.mypage-form-group input::placeholder {
+  color: #94a3b8;
+}
+
+.mypage-file-input {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #0f172a;
+  line-height: 46px;
+  overflow: hidden;
+  display: block; 
+}
+
+.mypage-file-input::file-selector-button,
+.mypage-file-input::-webkit-file-upload-button {
+  height: 30px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 10px;
+  padding: 0 12px;
+  margin-right: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle; 
+  margin-top: -5px; 
+}
+
+.mypage-file-input::file-selector-button:hover,
+.mypage-file-input::-webkit-file-upload-button:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.mypage-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+.mypage-primary-button {
+  min-width: 148px;
+  height: 46px;
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.mypage-primary-button:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.mypage-primary-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.mypage-empty-text {
+  margin: 0;
+  padding: 20px 0 6px;
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.mypage-certificate-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 6px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.mypage-certificate-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mypage-certificate-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+
+.mypage-certificate-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.mypage-certificate-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.mypage-certificate-item {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.mypage-certificate-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
 }
 
-.mypage-info-item label {
-  display: block;
-  font-size: 0.78rem;
-  color: #9ca3af;
-  margin-bottom: 4px;
-  font-weight: 600;
+.mypage-certificate-top strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.5;
 }
 
-.mypage-info-item span {
-  font-size: 14px;
-  font-weight: 700;
-  color: #111827;
-}
-
-/* ── 자격증 아이템 ── */
-.certificate-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #f9fafb;
-  margin-bottom: 10px;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.certificate-item:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
-}
-
-.certificate-item-name {
-  margin: 0 0 2px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.certificate-item-date {
-  margin: 0;
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-/* ── 배지 ── */
-.certificate-badge {
+.mypage-status-badge {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
+  justify-content: center;
+  min-width: 56px;
+  height: 30px;
   border-radius: 999px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mypage-status-pending {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+}
+
+.mypage-status-approved {
+  background: #ecfdf5;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.mypage-status-rejected {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.mypage-certificate-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.mypage-certificate-link {
+  margin-top: 12px;
+}
+
+.mypage-certificate-link a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid #bfdbfe;
   background: #eff6ff;
   color: #2563eb;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  border: 1px solid #bfdbfe;
-  white-space: nowrap;
-}
-
-.certificate-badge.pending {
-  background: #fefce8;
-  color: #ca8a04;
-  border-color: #fde68a;
-}
-
-.certificate-badge.rejected {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fecaca;
-}
-
-/* ── 빈 상태 ── */
-.mypage-empty-text {
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.9rem;
-  padding: 16px 0;
-  font-weight: 600;
-}
-
-/* ── 버튼 ── */
-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #374151;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  cursor: pointer;
-  margin-top: 6px;
-  box-sizing: border-box;
+  text-decoration: none;
   transition:
-    transform 0.2s ease,
     background-color 0.2s ease,
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    color 0.2s ease;
 }
 
-button:hover {
-  transform: translateY(-1px);
-  background: #f9fafb;
-  border-color: #9ca3af;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+.mypage-certificate-link a:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
 }
 
-button.primary {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
+.mypage-rejected-reason {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #be123c;
+  word-break: break-word;
 }
 
-button.primary:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+@media (max-width: 1024px) {
+  .mypage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mypage-user-info-grid-3,
+  .mypage-user-info-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .mypage-page {
+    padding: 20px 14px 28px;
+  }
+
+  .mypage-header-card,
+  .mypage-card {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .mypage-title {
+    font-size: 26px;
+  }
+
+  .mypage-user-name {
+    font-size: 22px;
+  }
+
+  .mypage-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mypage-actions {
+    justify-content: stretch;
+  }
+
+  .mypage-primary-button {
+    width: 100%;
+  }
+
+  .mypage-certificate-list {
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mypage-certificate-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mypage-status-badge {
+    min-width: auto;
+  }
 }
